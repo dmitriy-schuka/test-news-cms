@@ -1,13 +1,22 @@
-import { prisma } from "~/db/db.server";
+import { prisma } from "~/db/prisma.server";
+import { hashPassword } from "~/utils/hash.server";
+import { ADMIN_SEED } from "~/constants/db";
 
 async function seed() {
-  await prisma.user.create({
-    data: {
-      name: 'admin',
-      email: 'admin@gmail.com',
-      password: 'admin_hashed_password_here',
-    },
-  });
+  const admin = await prisma.user.findUnique({ where: { email: ADMIN_SEED.email } });
+
+  if (!admin) {
+    await prisma.user.create({
+      data: {
+        name: ADMIN_SEED.name,
+        email: ADMIN_SEED.email,
+        password: await hashPassword(ADMIN_SEED.defaultPassword),
+        role: ADMIN_SEED.role,
+      },
+    });
+  }
+
+  console.log("Admin user seeded.");
 }
 
 seed()
