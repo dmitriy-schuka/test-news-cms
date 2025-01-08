@@ -16,7 +16,7 @@ export default function Index() {
       fullWidth
       titleHidden
     >
-      <Header />
+      {/*<Header />*/}
       Hello!
     </Page>
   );
