@@ -3,8 +3,8 @@ import { createCookieSessionStorage } from "@remix-run/node";
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "__session",
-    secrets: ["your-secret"], // замените на ваш секрет
-    // secrets: [process.env.SESSION_SECRET!], // Используйте секрет из переменных окружения
+    // secrets: [process.env.SESSION_SECRET!],
+    secrets: [process.env.SESSION_SECRET],
     sameSite: "lax",
     maxAge: 60,
     path: "/",
