@@ -1,42 +1,34 @@
-import { Box, Button, Avatar, Thumbnail, FullscreenBar, ButtonGroup, InlineStack } from "@shopify/polaris";
+import { Box, InlineStack } from "@shopify/polaris";
+import { useLoaderData, Link } from "@remix-run/react";
 import { useState, useCallback } from "react";
 import SearchBar from "~/components/common/SearchBar/SearchBar";
+import UserMenu from "~/components/Header/components/UserMenu/UserMenu";
 import NewsLogo from "/Fox-News-Channel-Emblem.png";
 import styles from './Header.module.css';
 
-
-const Header = () => {
-  const [user, setUser] = useState();
+const Header = ({ user }: { user: { email: string, name: string } | null }) => {
   const [searchValue, setSearchValue] = useState("");
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   return (
     <div className={styles.Header__main}>
       <InlineStack
         align={"space-between"}
         blockAlign={"center"}
-        // gap
       >
         <Box>
-          <img
-            src={NewsLogo}
-            alt="NewsLogo"
-            className={styles.Header__icon}
-          />
-
-          {/*<Thumbnail source={NewsLogo} alt={"NewsLogo"}/>*/}
+          <Link to={"/app"}>
+            <img
+              src={NewsLogo}
+              alt="NewsLogo"
+              className={styles.Header__icon}
+            />
+          </Link>
         </Box>
 
         <SearchBar/>
 
         <Box padding="400">
-          <Button variant={"plain"}>
-            {
-              user
-                ? <Avatar initials="WW" name="Woluwayemisi Weun-Jung" size={"xl"}/>
-                : <Avatar customer size={"xl"}/>
-            }
-          </Button>
+          <UserMenu user={user} />
         </Box>
       </InlineStack>
     </div>
