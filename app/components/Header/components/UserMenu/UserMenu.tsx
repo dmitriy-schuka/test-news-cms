@@ -1,8 +1,20 @@
-import React from 'react';
-import { Form } from "@remix-run/react";
+import React, { useCallback, useState } from 'react';
+import Modal from 'react-modal';
 import { Button, Avatar } from "@shopify/polaris";
 
+import Login from '../Login/Login';
+import Logout from '../Logout/Logout';
+
 const UserMenu = ({ user }: { user: { email: string, name: string } | null }) => {
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const openModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+  const closeModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   const initials = user?.name
     ? user.name
       .split(" ")
@@ -10,22 +22,53 @@ const UserMenu = ({ user }: { user: { email: string, name: string } | null }) =>
       .join("")
     : "U";
 
-  if (user) {
-    return (
-      <Form method="post" action="/logout">
-        <Button variant={"plain"} submit>
-          {/*<Avatar initials={user.email[0].toUpperCase()} name={user.name} size={"xl"} />*/}
-          <Avatar initials={initials} name={user.name || "User"} size={"xl"} />
-        </Button>
-      </Form>
-    );
-  }
-
   return (
-    <Button variant={"plain"} /*href="/login"*/>
-      <Avatar customer size={"xl"} />
-    </Button>
-  );
+    <div>
+      <Button variant={"plain"} onClick={openModal} fullWidth size={"large"}>
+        {
+          user
+            ? <Avatar initials={initials} name={user.name || "User"} size={"xl"} />
+            : <Avatar customer size={"xl"} />
+        }
+      </Button>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Example Modal"
+        ariaHideApp={false}
+        style={{
+          overlay:{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          content: {
+            border: "none",
+            background: "none",
+
+            width: "fit-content",
+            height: "fit-content",
+
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+          },
+        }}
+        closeTimeoutMS={300}
+        // overlayClassName={styles.ReactModal__Overlay}
+      >
+        {
+          user
+            ? <Logout closeModal={closeModal}/>
+            : <Login closeModal={closeModal}/>
+        }
+      </Modal>
+    </div>
+  )
 };
 
 export default UserMenu;
