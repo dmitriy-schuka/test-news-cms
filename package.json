@@ -14,14 +14,23 @@
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@prisma/client": "^6.0.1",
-    "@remix-run/node": "^2.15.1",
-    "@remix-run/react": "^2.15.1",
+    "@remix-run/css-bundle": "^2.15.2",
+    "@remix-run/node": "^2.15.2",
+    "@remix-run/react": "^2.15.2",
     "@remix-run/serve": "^2.15.1",
+    "@shopify/polaris": "^13.9.2",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "isbot": "^4.1.0",
     "prisma": "^6.0.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-modal": "^3.16.3",
+    "remix-auth": "^4.1.0",
+    "remix-auth-form": "^3.0.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.1",
