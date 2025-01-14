@@ -8,7 +8,8 @@ async function seed() {
   if (!admin) {
     await prisma.user.create({
       data: {
-        name: ADMIN_SEED.name,
+        firstName: ADMIN_SEED.firstName,
+        lastName: ADMIN_SEED.lastName,
         email: ADMIN_SEED.email,
         password: await hashPassword(ADMIN_SEED.defaultPassword),
         role: ADMIN_SEED.role,
