@@ -1,5 +1,6 @@
 export const ADMIN_SEED = {
-  name: "admin",
+  firstName: "Admin",
+  lastName: "Adminich",
   email: "admin@gmail.com",
   defaultPassword: "admin",
   role: "admin",
