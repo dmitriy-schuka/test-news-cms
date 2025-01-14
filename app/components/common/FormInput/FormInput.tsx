@@ -1,10 +1,10 @@
 import React from 'react';
 
-const FormInput = ({type, name, required, placeholder}) => {
+const FormInput = ({type, name, required, label, placeholder, onChange}) => {
   return (
     <div>
       <label htmlFor="name" className="block mb-1 text-sm font-medium capitalize">
-        {name}
+        {label}
       </label>
 
       <input
@@ -13,6 +13,8 @@ const FormInput = ({type, name, required, placeholder}) => {
         name={name}
         required={required}
         placeholder={placeholder}
+        autoComplete={"off"}
+        onChange={onChange && ((e) => onChange(e?.target?.value))}
         className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1"
       />
     </div>
