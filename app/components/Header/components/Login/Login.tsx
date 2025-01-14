@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Card, Box, Button, BlockStack, FormLayout, Text, InlineStack, /*Form, Link*/ } from "@shopify/polaris";
 import { Form, Link, useNavigate } from "@remix-run/react";
 import FormInput from "~/components/common/FormInput/FormInput";
 
-const Login = ({closeModal}) => {
+const Login = ({closeModal, setModalType}) => {
+  const handleModal = useCallback((modalType) => {
+    setModalType(modalType);
+  }, [setModalType]);
+
   return (
     <Card>
       <Box>
@@ -49,9 +53,13 @@ const Login = ({closeModal}) => {
               Don't have an account?
             </Text>
 
-            <Link to={"/signup"}>
-              <p className="underline text-blue-600">Sign up</p>
-            </Link>
+            {/*<Link to={"/app/signup"} onClick={closeModal}>*/}
+            {/*  <p className="underline text-blue-600">Sign up</p>*/}
+            {/*</Link>*/}
+
+            <Button variant={"plain"} onClick={() => handleModal("signup")}>
+              Sign up
+            </Button>
           </InlineStack>
         </BlockStack>
       </Box>
