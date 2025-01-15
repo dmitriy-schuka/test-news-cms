@@ -1,97 +1,64 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import Modal from 'react-modal';
-import { Button, Avatar } from "@shopify/polaris";
+import React, { useState, useCallback } from 'react';
+import { MenuIcon } from '@shopify/polaris-icons';
+import { Icon, Button, Popover, ActionList } from '@shopify/polaris';
+import { useNavigate } from "@remix-run/react";
 
-import Login from '../Login/Login';
-import Logout from '../Logout/Logout';
-import Signup from '../Signup/Signup';
-import { getInitials } from "~/utils/common";
+import styles from './UserMenu.module.css';
 
-const UserMenu = ({ user }) => {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [modalType, setModalType] = useState("");
+const UserMenu = () => {
+  const [popoverActive, setPopoverActive] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    user
-      ? setModalType("logout")
-      : setModalType("login")
-  }, [user, setModalType]);
+  const togglePopoverActive = useCallback(
+    () => setPopoverActive((popoverActive) => !popoverActive),
+    [],
+  );
 
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, [setIsOpen]);
+  const itemsActions = [
+    {
+      content: 'Users',
+      onAction: () => navigate('/app/users'),
+    },
+    {
+      content: 'News',
+      onAction: () => navigate('/app/news'),
+    },
+    {
+      content: 'RSS imports',
+      onAction: () => navigate('/app/rss'),
+    },
+    {
+      content: 'Advertisements',
+      onAction: () => navigate('/app/advertisements'),
+    },
+    {
+      content: 'My account',
+      onAction: () => navigate('/app/account'),
+    },
+  ];
 
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-  }, [setIsOpen]);
-
-  const renderModal = useMemo(() => {
-    switch (modalType) {
-      case "signup":
-        return <Signup closeModal={closeModal}/>
-      case "logout":
-        return <Logout closeModal={closeModal}/>
-      case "login":
-        return <Login closeModal={closeModal} setModalType={setModalType}/>
-      default:
-        return null;
-    }
-  }, [modalType, setModalType, closeModal]);
-
-  // const initials = user?.name
-  //   ? user.name
-  //     .split(" ")
-  //     .map((n) => n[0])
-  //     .join("")
-  //   : "U";
-
-  const initials = getInitials(user?.firstName, user?.lastName);
+  const activator = (
+    <Button onClick={togglePopoverActive} variant="tertiary" size={"large"}>
+      <div className={"UserMenu__icon"} >
+        <Icon source={MenuIcon}/>
+      </div>
+    </Button>
+  );
 
   return (
     <div>
-      <Button variant={"plain"} onClick={openModal} fullWidth size={"large"}>
-        {
-          user
-            ? <Avatar initials={initials} name={user?.firstName || "User"} size={"xl"} />
-            : <Avatar customer size={"xl"} />
-        }
-      </Button>
-
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        ariaHideApp={false}
-        style={{
-          overlay:{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          content: {
-            border: "none",
-            background: "none",
-            width: "fit-content",
-            height: "fit-content",
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-          },
-        }}
-        closeTimeoutMS={300}
-        onAfterClose={() => {
-          user
-            ? setModalType("logout")
-            : setModalType("login")
-        }}
-        // overlayClassName={styles.ReactModal__Overlay}
+      <Popover
+        active={popoverActive}
+        activator={activator}
+        onClose={togglePopoverActive}
       >
-        {renderModal}
-      </Modal>
+        <ActionList
+          actionRole="menuitem"
+          items={itemsActions}
+        />
+      </Popover>
     </div>
-  )
+  );
 };
 
 export default UserMenu;
