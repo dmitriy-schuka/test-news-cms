@@ -1,7 +1,9 @@
 import { Box, InlineStack } from "@shopify/polaris";
-import { useLoaderData, Link } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import { useState, useCallback } from "react";
+
 import SearchBar from "~/components/common/SearchBar/SearchBar";
+import AuthMenu from "~/components/Header/components/AuthMenu/AuthMenu";
 import UserMenu from "~/components/Header/components/UserMenu/UserMenu";
 import NewsLogo from "/Fox-News-Channel-Emblem.png";
 import styles from './Header.module.css';
@@ -27,8 +29,11 @@ const Header = ({ user }: { user: { email: string, name: string } | null }) => {
 
         <SearchBar/>
 
-        <Box padding="400">
-          <UserMenu user={user} />
+        <Box padding={400}>
+          <InlineStack gap={500}>
+            <UserMenu user={user} />
+            <AuthMenu user={user} />
+          </InlineStack>
         </Box>
       </InlineStack>
     </div>
