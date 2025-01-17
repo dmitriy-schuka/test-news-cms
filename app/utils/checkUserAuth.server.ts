@@ -8,4 +8,6 @@ export const checkUserAuth = async (request) => {
   if (!user) {
     throw redirect("/app");
   }
+
+  return user;
 }

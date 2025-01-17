@@ -55,6 +55,7 @@ const UserMenu = () => {
         <ActionList
           actionRole="menuitem"
           items={itemsActions}
+          onActionAnyItem={() => setPopoverActive(false)}
         />
       </Popover>
     </div>

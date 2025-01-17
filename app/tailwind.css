@@ -23,3 +23,12 @@ body {
 .ReactModal__Overlay--before-close{
   opacity: 0;
 }
+
+.UserMenu__icon .Polaris-Icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.UserMenu__icon .Polaris-Icon__Svg {
+  fill: white !important;
+}
