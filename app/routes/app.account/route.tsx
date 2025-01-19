@@ -95,6 +95,7 @@ export default function Account() {
   const [isPassVerify, setIsPassVerify] = useState<boolean>(true);
   const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const submit = useSubmit();
 
   useEffect(() =>  {
     if (actionData?.isPassVerify === false) {
@@ -105,8 +106,6 @@ export default function Account() {
       setCurrentPassword();
     }
   }, [setIsPassVerify, actionData])
-
-  const submit = useSubmit();
 
   const { user } = loaderData;
 
@@ -161,7 +160,7 @@ export default function Account() {
 
   return (
     <Page
-      title={""}
+      title={"Account page"}
       titleHidden
     >
       <AccountForm
