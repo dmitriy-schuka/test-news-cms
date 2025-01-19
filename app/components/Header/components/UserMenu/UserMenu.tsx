@@ -21,7 +21,11 @@ const UserMenu = () => {
     },
     {
       content: 'News',
-      onAction: () => navigate('/app/news'),
+      onAction: () => navigate('/app/news/list'),
+    },
+    {
+      content: 'Tags',
+      onAction: () => navigate('/app/tags/list'),
     },
     {
       content: 'RSS imports',
