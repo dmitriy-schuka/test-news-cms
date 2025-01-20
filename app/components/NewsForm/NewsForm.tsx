@@ -13,14 +13,14 @@ import MediaInput from "~/components/common/MediaInput/MediaInput";
 import TagsSelector from "~/components/common/TagsSelector/TagsSelector";
 
 const NewsForm = (props) => {
-  const { newsData, handleChange } = props;
+  const { newsData, handleChange, tags, handleCreateNews, handleEditNews, handleDeleteNews } = props;
 
   return (
     <InlineStack align={"center"} blockAlign={"center"}>
       <div style={{maxWidth: "500px", width: "100%"}}>
         <Box>
           <Card>
-            <Form onSubmit={() => {}}>
+            <Form onSubmit={newsData?.id ? handleEditNews : handleCreateNews}>
               <FormLayout>
                 <MediaInput/>
 
@@ -44,7 +44,7 @@ const NewsForm = (props) => {
                   maxHeight={200}
                 />
 
-                <TagsSelector/>
+                <TagsSelector tags={tags} newsData={newsData} handleChange={handleChange}/>
 
                 <Checkbox
                   label="Published"
@@ -52,7 +52,16 @@ const NewsForm = (props) => {
                   onChange={(value) => handleChange(value, "published")}
                 />
 
-                <Button variant="primary" submit>Create news</Button>
+                {
+                  newsData?.id
+                    ?
+                      <InlineStack align={"space-between"}>
+                        <Button variant="primary" tone={"critical"} onClick={handleDeleteNews}>Delete</Button>
+                        <Button variant="primary" submit>Edit</Button>
+                      </InlineStack>
+                    :
+                      <Button variant="primary" submit>Create news</Button>
+                }
               </FormLayout>
             </Form>
           </Card>
