@@ -9,6 +9,8 @@ import type { Tag } from "~/@types/tag";
 import { createTag, deleteTag, getTagById, updateTag } from "~/repositories/tagRepository.server";
 
 export const loader: LoaderFunction = async ({ params, request }: LoaderFunctionArgs) => {
+  // await checkUserAuth(request);
+
   if (params?.id !== 'new') {
     const tagData = await getTagById(Number(params.id));
     return json({ tagData });
@@ -21,12 +23,12 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
   const body = await request.formData();
 
   const tagId = body.get("id");
-  const name = body.get("name")?.toString();
+  const tagName = body.get("name")?.toString();
 
   switch (request.method) {
     case "POST": {
       const tag = await createTag({
-        name
+        name: tagName,
       });
 
       if (tag?.id) {
@@ -39,7 +41,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     }
     case "PUT": {
       const tag = await updateTag(Number(tagId),{
-        name
+        name: tagName,
       });
 
       if (tag?.id) {
@@ -83,13 +85,13 @@ export default function TagsCreate() {
     if (actionData?.result) {
       // show some toast
     }
-  }, [actionData]);
+  }, [actionData, setActionError]);
 
   useEffect(() => {
     if (loaderData?.tagData?.id) {
       setTagData(loaderData.tagData);
     }
-  }, [loaderData]);
+  }, [loaderData, setTagData]);
 
   const handleChange = useCallback(
     (newValue: string, fieldName: string) => {
@@ -104,13 +106,13 @@ export default function TagsCreate() {
   const handleCreateTag = useCallback(() => {
       submit(tagData, {
         method: "POST"
-      })
+      });
     }, [tagData, submit]);
 
   const handleEditTag = useCallback(() => {
       submit(tagData, {
         method: "PUT"
-      })
+      });
     }, [tagData, submit]);
 
   const handleDeleteTag = useCallback(() => {
@@ -118,7 +120,7 @@ export default function TagsCreate() {
         id: tagData?.id,
       }, {
         method: "DELETE"
-      })
+      });
     }, [tagData, submit]);
 
   return (
