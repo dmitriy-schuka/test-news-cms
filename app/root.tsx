@@ -10,7 +10,8 @@ import { PolarisProvider } from "~/components/providers/PolarisProvider";
 
 // import styles from "@shopify/polaris/build/esm/styles.css";
 import "@shopify/polaris/build/esm/styles.css";
-import "./tailwind.css";
+// import "./tailwind.css";
+import tailwindStyles from "./tailwind.css?url";
 
 // export const loader = async ({ request }: { request: Request }) => {
 //   const session = await sessionStorage.getSession(request.headers.get("cookie"));
@@ -33,7 +34,8 @@ export const links: LinksFunction = () => [
   //     rel: "stylesheet",
   //     href: "@shopify/polaris/build/esm/styles.css",
   //   },
-  { rel: "stylesheet", href: "https://unpkg.com/@shopify/polaris/build/esm/styles.css" },
+  // { rel: "stylesheet", href: "https://unpkg.com/@shopify/polaris/build/esm/styles.css" },
+  { rel: "stylesheet", href: tailwindStyles },
 ];
 
 export default function App() {
