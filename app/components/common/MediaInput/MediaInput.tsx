@@ -58,6 +58,7 @@ const MediaInput = ({ newsData, handleChange }) => {
                         <video
                           src={file?.url ? file.url : window.URL.createObjectURL(file)}
                           autoPlay
+                          loop
                           style={{maxWidth: "373px", maxHeight: "118px"}}
                         />
                       :

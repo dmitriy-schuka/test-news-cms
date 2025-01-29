@@ -3,6 +3,7 @@ import {
   Box,
   Card,
   InlineStack,
+  BlockStack,
   Text,
   IndexTable,
   useIndexResourceState,
@@ -14,6 +15,10 @@ import {
 } from "@shopify/polaris";
 import { useSearchParams } from "@remix-run/react";
 import { checkIsArray } from "~/utils/common";
+import type { Media } from "~/@types/media";
+import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from "~/constants/common";
+import DefaultImage from '~/assets/images/default-image.jpg';
+import styles from './NewsTable.module.css';
 
 const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPreviousPage, handleNewsEdit }) => {
   const [sortedNews, setSortedNews] = useState([]);
@@ -62,6 +67,46 @@ const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPrev
     />
   );
 
+  const renderMedia = (media: Media[]) => {
+    return (
+      media.map((mediaItem, index) => {
+        const mediaUrl = mediaItem?.url || DefaultImage;
+
+        switch (true) {
+          case VALID_IMAGE_TYPES.includes(mediaItem?.mediaType):
+            return (
+              <Thumbnail
+                key={`${index}-${mediaItem?.url}`}
+                source={mediaUrl}
+                alt="News media"
+              />
+            )
+          case VALID_VIDEO_TYPES.includes(mediaItem?.mediaType):
+            return (
+              <div className={styles.NewsVideo__container} key={`${index}-${mediaItem?.url}`}>
+                <BlockStack inlineAlign={"start"} align={"center"}>
+                  <video
+                    src={mediaUrl}
+                    autoPlay
+                    loop
+                    style={{maxWidth: "60px", maxHeight: "60px"}}
+                  />
+                </BlockStack>
+              </div>
+            )
+          default:
+            return (
+              <Thumbnail
+                key={`${index}-${mediaItem?.url}`}
+                source={mediaUrl}
+                alt="News media"
+              />
+            )
+        }
+      })
+    );
+  };
+
   const rowMarkup = useMemo(() => {
     if (checkIsArray(sortedNews)) {
       return (
@@ -86,7 +131,8 @@ const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPrev
 
               <IndexTable.Cell flush>
                 <Box maxWidth={"360px"} width={"100%"}>
-                  <p className={"truncate"}>
+                  {/*<p className={"truncate"}>*/}
+                  <p className={styles.Text__truncate}>
                     {content}
                   </p>
                 </Box>
@@ -105,10 +151,15 @@ const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPrev
               </IndexTable.Cell>
 
               <IndexTable.Cell>
-                <Thumbnail
-                  source="https://burst.shopifycdn.com/photos/black-leather-choker-necklace_373x@2x.jpg"
-                  alt="Black choker necklace"
-                />
+                {
+                  checkIsArray(media)
+                    ? renderMedia(media)
+                    :
+                      <Thumbnail
+                        source={DefaultImage}
+                        alt="Black choker necklace"
+                      />
+                }
               </IndexTable.Cell>
             </IndexTable.Row>
           )
