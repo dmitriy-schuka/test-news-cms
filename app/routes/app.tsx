@@ -23,10 +23,8 @@ export default function App() {
   const submit = useSubmit();
 
   return (
-    <div>
+    <div style={{paddingBottom: "50px"}}>
       <Header user={user}/>
-      Hello!
-
       <Outlet />
     </div>
   );
