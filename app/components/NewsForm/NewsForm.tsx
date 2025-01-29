@@ -22,13 +22,13 @@ const NewsForm = (props) => {
           <Card>
             <Form onSubmit={newsData?.id ? handleEditNews : handleCreateNews}>
               <FormLayout>
-                <MediaInput/>
+                <MediaInput newsData={newsData} handleChange={handleChange}/>
 
                 <TextField
                   label={"News title"}
                   type={"text"}
                   placeholder={"News title"}
-                  value={newsData?.title}
+                  value={newsData?.title || undefined}
                   onChange={(value) => handleChange(value, "title")}
                   autoComplete={"off"}
                 />
@@ -37,7 +37,7 @@ const NewsForm = (props) => {
                   label={"News content"}
                   type={"text"}
                   placeholder={"News content"}
-                  value={newsData?.content}
+                  value={newsData?.content || undefined}
                   onChange={(value) => handleChange(value, "content")}
                   autoComplete={"off"}
                   multiline={10}
