@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useMemo} from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   BlockStack,
   InlineStack,
@@ -9,11 +9,9 @@ import {
   Listbox,
 } from "@shopify/polaris";
 import {SearchIcon} from '@shopify/polaris-icons';
+import { checkIsArray } from "~/utils/common";
 
 const TagsSelector = ({tags, newsData, handleChange}) => {
-  console.log('newsData in TagsSelector:')
-  console.log(newsData)
-
   const deselectedOptions = useMemo(() => {
     if (tags && Array.isArray(tags) && tags.length > 0) {
       return tags.map(({id, name}) => ({
@@ -28,6 +26,12 @@ const TagsSelector = ({tags, newsData, handleChange}) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState(deselectedOptions);
+
+  useEffect(() => {
+    if (checkIsArray(newsData?.tags)) {
+      setSelectedOptions(newsData.tags);
+    }
+  }, [setSelectedOptions, newsData?.tags])
 
   const escapeSpecialRegExCharacters = useCallback(
     (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
