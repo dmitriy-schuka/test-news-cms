@@ -2,6 +2,7 @@ import { prisma } from "~/db/prisma.server";
 import type { Prisma, PrismaClient } from "@prisma/client";
 import type { News, PaginatedNews, NewsCreate, NewsUpdate } from "~/@types/news";
 import type { Tag } from "~/@types/tag";
+import { deleteFile } from "~/services/minio.server";
 
 export const getNews = async (
   newsTags?: number[],
@@ -81,45 +82,82 @@ export const getNews = async (
 
 export const getNewsById = async (id: string): Promise<News | null> => {
   try {
-    return prisma.news.findUnique({
+    const newsData = await prisma.news.findUnique({
       where: { id },
       include: {
         tags: true,
         media: true,
       },
     });
+
+    newsData.tags = newsData?.tags?.map(({id}) => id);
+
+    return newsData;
   } catch (err) {
     throw new Error(`Error fetching single news: ${err}`);
   }
 };
 
-export const createNews = async (data: NewsCreate, newsTags: string[]): Promise<News> => {
+export const createNews = async (data: NewsCreate, newsTags: string[], media): Promise<News> => {
   try {
-    return prisma.news.create({
+    const newData = await prisma.news.create({
       data: {
         ...data,
         tags: {
-          connect: newsTags.map((tagId) => ({ id: Number(tagId) }))
+          connect: newsTags?.map((tagId) => ({ id: Number(tagId) }))
         },
       },
       include: {
         tags: true,
       },
     });
+
+    let mediaData;
+
+    if (media?.url) {
+      mediaData = await prisma.media.create({
+        data: {
+          ...media,
+          newsId: newData?.id,
+        },
+      });
+    }
+
+    return { ...newData, media: mediaData };
   } catch (err) {
     throw new Error(`Error creating news: ${err}`);
   }
 };
 
-export const updateNews = async (id: string, data: NewsUpdate, newsTags: string[]): Promise<News> => {
+export const updateNews = async (id: string, data: NewsUpdate, newsTags: string[], newMedia, oldMediaId: number): Promise<News> => {
   try {
+    if (newMedia?.url) {
+      if (oldMediaId) {
+        await prisma.media.update({
+          where: {
+            id: oldMediaId,
+          },
+          data: {
+            ...newMedia,
+          },
+        });
+      } else {
+        await prisma.media.create({
+          data: {
+            ...newMedia,
+            newsId: id,
+          },
+        });
+      }
+    }
+
     return prisma.news.update({
       where: { id },
       data: {
         ...data,
         tags: {
           set: [], // Delete existing references
-          connect: newsTags.map((tagId) => ({ id: Number(tagId) })), // Add new references
+          connect: newsTags?.map((tagId) => ({ id: Number(tagId) })), // Add new references
         },
       },
       include: {
@@ -130,28 +168,26 @@ export const updateNews = async (id: string, data: NewsUpdate, newsTags: string[
   } catch (err) {
     throw new Error(`Error updating news: ${err}`);
   }
-
-  // const news = await prisma.news.findUnique({ where: { id } });
-  // if (!news) {
-  //   throw new Error("News not found");
-  // }
-  //
-  // return prisma.news.update({
-  //   where: { id },
-  //   data,
-  // });
 };
 
-export const deleteNews = async (id: string, newsTags: string[]): Promise<News> => {
+export const deleteNews = async (id: string, newsTags: string[], oldMediaData): Promise<News> => {
   try {
     await prisma.news.update({
       where: { id },
       data: {
         tags: {
-          disconnect: newsTags.map((tagId) => ({ id: Number(tagId) })),
+          disconnect: newsTags?.map((tagId) => ({ id: Number(tagId) })),
         },
       },
     });
+
+    if (oldMediaData?.mediaName && oldMediaData?.mediaId) {
+      await deleteFile(oldMediaData.mediaName);
+
+      await prisma.media.delete({
+        where: { id: oldMediaData.mediaId },
+      });
+    }
 
     return prisma.news.delete({
       where: { id },
