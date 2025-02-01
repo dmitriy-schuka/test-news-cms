@@ -3,6 +3,8 @@ import {
   Meta,
   Outlet,
   Scripts,
+  isRouteErrorResponse,
+  useRouteError,
   ScrollRestoration,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
@@ -56,5 +58,26 @@ export default function App() {
         </PolarisProvider>
       </body>
     </html>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    return <meta httpEquiv="refresh" content="0;url=/app/news/grid" />;
+  }
+
+  let errorMessage = 'Unknown error';
+  if (error instanceof Error) {
+    errorMessage = error.message;
+  }
+
+  return (
+    <div>
+      <h1>Uh oh ...</h1>
+      <p>Something went wrong.</p>
+      <pre>{errorMessage}</pre>
+    </div>
   );
 }
