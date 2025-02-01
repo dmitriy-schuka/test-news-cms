@@ -75,7 +75,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
       if (user?.id) {
         const session = await sessionStorage.getSession(request.headers.get("cookie"));
 
-        return redirect("/app", {
+        return redirect("/app/news/grid", {
           headers: { "Set-Cookie": await sessionStorage.destroySession(session) },
         });
       } else {

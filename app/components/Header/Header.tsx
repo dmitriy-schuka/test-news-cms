@@ -18,7 +18,7 @@ const Header = ({ user }: { user: { email: string, name: string } | null }) => {
         blockAlign={"center"}
       >
         <Box>
-          <Link to={"/app"}>
+          <Link to={"/app/news/grid"}>
             <img
               src={NewsLogo}
               alt="NewsLogo"
