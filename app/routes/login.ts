@@ -10,7 +10,7 @@ export async function action({ request }: { request: Request }) {
   session.set("user", user);
 
   /** Save the session and redirect to the main page */
-  throw redirect("/app", {
+  throw redirect("/app/news/grid", {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session),
     },
