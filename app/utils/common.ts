@@ -1,3 +1,6 @@
+import { formatDistanceToNow } from "date-fns";
+import { enUS } from "date-fns/locale";
+
 export const getInitials = (firstName: string, lastName: string): string => {
   const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : "U";
   const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : "";
@@ -15,4 +18,8 @@ export const getFileNameFromUrl = (url: string | undefined): string => {
   } else {
     return null;
   }
-}
+};
+
+export const formatTimeAgo = (dateString: string) => {
+  return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: enUS });
+};
