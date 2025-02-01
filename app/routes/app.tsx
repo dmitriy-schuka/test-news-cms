@@ -20,7 +20,6 @@ export const loader = async ({ request }: { request: Request }) => {
 
 export default function App() {
   const { user } = useLoaderData();
-  const submit = useSubmit();
 
   return (
     <div style={{paddingBottom: "50px"}}>
