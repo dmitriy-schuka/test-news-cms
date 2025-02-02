@@ -19,6 +19,8 @@ const prepareNewsQuery = (request) => {
       page,
       sortOrder: url.searchParams.get("sort") as "asc" | "desc",
       sortColumn: url.searchParams.get("column") ?? "id",
+      searchColumn: url.searchParams.get("searchColumn"),
+      searchValue: url.searchParams.get("searchValue"),
     }
   ];
 }
