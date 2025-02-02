@@ -1,8 +1,8 @@
+import bcrypt from "bcryptjs";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
 import { sessionStorage } from "~/services/session.server";
 import { prisma } from "~/db/prisma.server";
-import bcrypt from "bcryptjs";
 import { User } from "~/@types/user";
 
 /** Create an instance of Authenticator */
