@@ -9,6 +9,7 @@ import type { News } from "~/@types/news";
 import { deleteUser, getUserById, updateUser } from "~/repositories/userRepository.server";
 import NewsTable from "~/components/NewsTable/NewsTable";
 import { getNews } from "~/repositories/newsRepository.server";
+import { newsLoader } from "~/loaders/newsLoader";
 
 export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
   // const user = await checkUserAuth(request);
@@ -16,26 +17,7 @@ export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) =>
   //
   // return json({ user: fetchedUser });
 
-  const url = new URL(request.url);
-  const page = parseInt(url.searchParams.get("page") ?? "1");
-  const newsTags = url.searchParams.get("newsTags") ?? "";
-
-  const newsTagsArr = newsTags
-    ?.split(',')
-    ?.map((tag) => {
-      return Number(tag);
-    });
-
-  const fetchedNews = await getNews(
-    newsTags.length > 0
-      ? newsTagsArr
-      : [],
-    {
-      page,
-      sortOrder: url.searchParams.get("sort") as "asc" | "desc",
-      sortColumn: url.searchParams.get("column") ?? "id",
-    }
-  );
+  const fetchedNews = await newsLoader(request);
 
   return json({ newsData: fetchedNews });
 };
@@ -43,9 +25,6 @@ export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) =>
 export default function NewsList() {
   const { newsData } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-
-  console.log('newsData in NewsList:')
-  console.log(newsData)
 
   const handleNewsEdit = useCallback(
     (id: number) => {

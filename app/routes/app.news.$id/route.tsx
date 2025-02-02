@@ -57,9 +57,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
       mediaUrl = `http://localhost:9000/${process.env.MINIO_BUCKET_NAME}/${fileName}`;
     }
 
-    console.log('mediaUrl in action:')
-    console.log(mediaUrl)
-
     switch (request.method) {
       case "POST": {
         const news = await createNews(
@@ -160,11 +157,6 @@ export default function News() {
       // show some toast
     }
   }, [actionData, setActionError]);
-
-  // console.log('loaderData in app.news.%id:')
-  // console.log(loaderData)
-  // console.log('actionData in app.news.%id:')
-  // console.log(actionData)
 
   useEffect(() => {
     if (loaderData?.newsData?.id) {
