@@ -53,6 +53,8 @@ export const getMainPageNews = async (
     sortColumn?: string;
     page?: number;
     sortOrder?: Prisma.SortOrder;
+    searchColumn?: string;
+    searchValue?: string;
   },
 ): Promise<PaginatedNews | null> => {
   try {
@@ -75,58 +77,43 @@ export const getMainPageNews = async (
       },
     });
 
-    let totalNews;
-    let news;
+    let searchFilter;
 
-    if (newsTags && Array.isArray(newsTags) && newsTags.length > 0) {
-      const query = {
-        where: {
-          published: true,
-          tags: {
-            some: {
-              id: {
-                in: newsTags,
-              },
-            },
-          },
+    if (options?.searchColumn && options?.searchValue) {
+      searchFilter = {
+        [options.searchColumn]: {
+          contains: options.searchValue,
+          mode: "insensitive",  // Case insensitive search
         },
       };
-
-      totalNews = await prisma.news.count(query);
-
-      news = await prisma.news.findMany({
-        where: query.where,
-        take,
-        skip,
-        orderBy: {
-          [sortColumn]: sortDirection,
-        },
-        include: {
-          tags: true,
-          media: true,
-        },
-      });
-    } else {
-      totalNews = await prisma.news.count();
-
-      news = await prisma.news.findMany({
-        where: {
-          published: true,
-          id: {
-            not: latestNews?.id,
-          },
-        },
-        take,
-        skip,
-        orderBy: {
-          [sortColumn]: sortDirection,
-        },
-        include: {
-          tags: true,
-          media: true,
-        },
-      });
     }
+
+    let baseWhere = {
+      published: true,
+      id: {
+        not: latestNews?.id
+      },
+      ...searchFilter,
+    };
+
+    if (newsTags && Array.isArray(newsTags) && newsTags.length > 0) {
+      baseWhere = {
+        ...baseWhere,
+        tags: {
+          some: { id: { in: newsTags } },
+        },
+      };
+    }
+
+    const totalNews = await prisma.news.count({ where: baseWhere });
+
+    const news = await prisma.news.findMany({
+      where: baseWhere,
+      take,
+      skip,
+      orderBy: { [sortColumn]: sortDirection },
+      include: { tags: true, media: true },
+    });
 
     return {
       news,
@@ -153,6 +140,7 @@ export const getNewsById = async (id: string): Promise<News | null> => {
       },
     });
 
+    newsData.tagsData = newsData?.tags;
     newsData.tags = newsData?.tags?.map(({id}) => id);
 
     return newsData;
