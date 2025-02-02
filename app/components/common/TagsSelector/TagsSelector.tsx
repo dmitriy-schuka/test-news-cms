@@ -11,7 +11,7 @@ import {
 import {SearchIcon} from '@shopify/polaris-icons';
 import { checkIsArray } from "~/utils/common";
 
-const TagsSelector = ({tags, newsData, handleChange}) => {
+const TagsSelector = ({tags, newsTags, handleChange}) => {
   const deselectedOptions = useMemo(() => {
     if (tags && Array.isArray(tags) && tags.length > 0) {
       return tags.map(({id, name}) => ({
@@ -28,10 +28,10 @@ const TagsSelector = ({tags, newsData, handleChange}) => {
   const [options, setOptions] = useState(deselectedOptions);
 
   useEffect(() => {
-    if (checkIsArray(newsData?.tags)) {
-      setSelectedOptions(newsData.tags);
+    if (checkIsArray(newsTags)) {
+      setSelectedOptions(newsTags);
     }
-  }, [setSelectedOptions, newsData?.tags])
+  }, [setSelectedOptions, newsTags])
 
   const escapeSpecialRegExCharacters = useCallback(
     (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
@@ -84,7 +84,7 @@ const TagsSelector = ({tags, newsData, handleChange}) => {
   );
 
   const tagsMarkup = selectedOptions.map((option) => {
-    const optionLabel = tags?.find(({id}) => id == option).name;
+    const optionLabel = tags?.find(({id}) => id === option).name;
 
     return (
       <Tag key={`option-${option}`} onRemove={removeTag(option)}>
