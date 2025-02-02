@@ -2,15 +2,14 @@ import React from 'react';
 import { checkIsArray } from "~/utils/common";
 import { MediaCard, Text, BlockStack } from "@shopify/polaris";
 import { VALID_VIDEO_TYPES } from "~/constants/common";
+import BlockTitle from "~/components/common/BlockTitle/BlockTitle";
 
 const NewsMediaCard = ({ newsData }) => {
   const newsMedia = checkIsArray(newsData?.media) && newsData.media[0];
 
   return (
     <BlockStack>
-      <Text variant="headingSm" as="h6">
-        Latest news
-      </Text>
+      <BlockTitle title={"Latest news"} />
 
       <MediaCard
         title={

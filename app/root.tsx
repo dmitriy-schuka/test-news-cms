@@ -75,7 +75,7 @@ export function ErrorBoundary() {
 
   return (
     <div>
-      <h1>Uh oh ...</h1>
+      <h1>Sorry.</h1>
       <p>Something went wrong.</p>
       <pre>{errorMessage}</pre>
     </div>
