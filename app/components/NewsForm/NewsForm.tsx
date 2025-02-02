@@ -44,7 +44,7 @@ const NewsForm = (props) => {
                   maxHeight={200}
                 />
 
-                <TagsSelector tags={tags} newsData={newsData} handleChange={handleChange}/>
+                <TagsSelector tags={tags} newsTags={newsData?.tags} handleChange={handleChange}/>
 
                 <Checkbox
                   label="Published"

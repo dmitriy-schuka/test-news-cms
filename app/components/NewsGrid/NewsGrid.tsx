@@ -6,9 +6,12 @@ import NewsMediaCard from "~/components/NewsGrid/components/NewsMediaCard/NewsMe
 import DefaultImage from "~/assets/images/default-image.jpg";
 import styles from './NewsGrid.module.css';
 import NewsPagination from "~/components/NewsGrid/components/NewsPagination/NewsPagination";
+import BlockTitle from "~/components/common/BlockTitle/BlockTitle";
+import { useNavigate } from "@remix-run/react";
 
 const NewsGrid = (props) => {
   const { news, latestNews, onSort, onNextPage, onPrevPage, hasNextPage, hasPrevPage, totalNews, page, handleFilterByTags } = props;
+  const navigate = useNavigate();
 
   const renderNewsMedia = useCallback((newsMedia) => {
     return (
@@ -18,7 +21,7 @@ const NewsGrid = (props) => {
         switch (true) {
           case VALID_IMAGE_TYPES.includes(mediaItem?.mediaType):
             return (
-              <div className={styles.News__media} key={`${index}-${mediaItem?.url}`}>
+              <div key={`${index}-${mediaItem?.url}`} className={styles.News__media}>
                 <img
                   src={mediaUrl}
                   alt="News media"
@@ -49,7 +52,10 @@ const NewsGrid = (props) => {
   const renderNewsTags = useCallback((tags) => {
     return (
       tags?.map((tag, index) => (
-        <Tag key={`${index}_${tag?.name}`} url="#" onClick={() => handleFilterByTags([tag?.id])}>
+        <Tag
+          key={`${index}_${tag?.name}`} url="#"
+          onClick={() => handleFilterByTags([tag?.id])}
+        >
           {tag?.name}
         </Tag>
       ))
@@ -63,19 +69,23 @@ const NewsGrid = (props) => {
           <Grid.Cell key={`${index}_${newsItem?.title}_news`}>
             <Card>
               <BlockStack gap={200}>
-                <Text variant="headingLg" as="h5">
-                  {newsItem?.title}
-                </Text>
+                <div className={styles.NewsCard__wrapper} onClick={() => navigate(`/app/publication/${newsItem?.id}`)}>
+                  <BlockStack gap={200}>
+                    <Text variant="headingLg" as="h5">
+                      {newsItem?.title}
+                    </Text>
 
-                {
-                  checkIsArray(newsItem?.media) && renderNewsMedia(newsItem.media)
-                }
+                    {
+                      checkIsArray(newsItem?.media) && renderNewsMedia(newsItem.media)
+                    }
 
-                <Text variant="bodyLg" as="p">
-                  <span className={styles.News__content}>
-                    {newsItem?.content}
-                  </span>
-                </Text>
+                    <Text variant="bodyLg" as="p">
+                      <span className={styles.News__content}>
+                        {newsItem?.content}
+                      </span>
+                    </Text>
+                  </BlockStack>
+                </div>
 
                 <InlineStack gap={100}>
                   {
@@ -84,7 +94,9 @@ const NewsGrid = (props) => {
                 </InlineStack>
 
                 <Text variant="bodySm" as="p">
-                  { formatTimeAgo(newsItem?.createdAt) }
+                  {
+                    formatTimeAgo(newsItem?.createdAt)
+                  }
                 </Text>
               </BlockStack>
             </Card>
@@ -98,15 +110,16 @@ const NewsGrid = (props) => {
     <Box paddingBlockStart={400}>
       <BlockStack gap={800}>
         {
-          latestNews && <NewsMediaCard newsData={latestNews} />
+          latestNews &&
+            <div style={{cursor: "pointer"}} onClick={() => navigate(`/app/publication/${latestNews?.id}`)}>
+              <NewsMediaCard newsData={latestNews} />
+            </div>
         }
 
         <BlockStack>
-          <Text variant="headingSm" as="h6">
-            Main news
-          </Text>
+          <BlockTitle title={"Main news"} />
 
-          <Grid columns={{xs: 1, sm: 2, md: 3, lg: 4, xl: 4}}>
+          <Grid columns={{xs: 1, sm: 1, md: 2, lg: 4, xl: 4}}>
             {renderNewsCards}
           </Grid>
         </BlockStack>
