@@ -1,7 +1,7 @@
 .Header__main {
   width: 100%;
   position: sticky;
-  background-color: #036;
+  background-color: var(--color-blue);
 }
 
 .Header__icon {

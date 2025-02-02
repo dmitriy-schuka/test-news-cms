@@ -11,6 +11,12 @@ body {
   /*}*/
 }
 
+:root {
+  --screen-small: 576px;
+  --color-white: white;
+  --color-blue: #036;
+}
+
 .ReactModal__Overlay {
   opacity: 0;
   transition: opacity 300ms ease-in-out;
@@ -30,5 +36,5 @@ body {
 }
 
 .UserMenu__icon .Polaris-Icon__Svg {
-  fill: white !important;
+  fill: var(--color-white) !important;
 }
