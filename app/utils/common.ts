@@ -7,7 +7,7 @@ export const getInitials = (firstName: string, lastName: string): string => {
   return `${firstInitial}${lastInitial}`;
 };
 
-export const checkIsArray = (arr: any[]): boolean => {
+export const checkIsArray = (arr: any[] | undefined): boolean => {
   return (arr && Array.isArray(arr) && arr.length > 0);
 };
 
@@ -20,6 +20,10 @@ export const getFileNameFromUrl = (url: string | undefined): string => {
   }
 };
 
-export const formatTimeAgo = (dateString: string) => {
-  return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: enUS });
+export const formatTimeAgo = (dateString: string | undefined) => {
+  if (dateString) {
+    return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: enUS });
+  } else {
+    return null;
+  }
 };
