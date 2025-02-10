@@ -1,4 +1,8 @@
-.News__content {
+.NewsCard__wrapper {
+  cursor: pointer;
+}
+
+.NewsCard__content {
   display: block;
   display: -webkit-box;
   /*height: 2.6em; */
@@ -9,14 +13,10 @@
   text-overflow: ellipsis;
 }
 
-.News__media {
+.NewsCard__media {
   /*max-width: 190px;*/
   max-height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.NewsCard__wrapper {
-  cursor: pointer;
 }
