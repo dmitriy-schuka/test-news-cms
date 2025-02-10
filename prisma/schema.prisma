@@ -34,6 +34,7 @@ model News {
   userId        Int
   author        User          @relation(fields: [userId], references: [id])
   media         Media[]
+  injection     Injection[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
@@ -54,4 +55,38 @@ model Media {
   news          News?         @relation(fields: [newsId], references: [id])
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+}
+
+model Settings {
+  id                Int     @id @default(autoincrement())
+  listInjections    Int     @default(4)
+  searchInjections  Int     @default(3)
+}
+
+model Injection {
+  id            Int           @id @default(autoincrement())
+  injectionType InjectionType
+  imageUrl      String?
+  linkUrl       String?
+  text          String?
+  newsId        Int?
+  news          News?         @relation(fields: [newsId], references: [id])
+  isDraft       Boolean       @default(true)
+  priority      Float         @default(0.0)
+  displayOn     DisplayOn
+  regex         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum InjectionType {
+  IMAGE
+  TEXT
+  NEWS
+}
+
+enum DisplayOn {
+  LIST
+  SEARCH
+  BOTH
 }
