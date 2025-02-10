@@ -1,9 +1,11 @@
 import React from 'react';
-import { Tag, Box, Grid, Card, Text, MediaCard, BlockStack, InlineStack, Thumbnail, VideoThumbnail } from "@shopify/polaris";
+import { Text } from "@shopify/polaris";
 import styles from './InjectionCard.module.css';
+import { INJECTION_TYPES } from "~/constants/common";
+import NewsCard from "~/components/NewsCard/NewsCard";
 
-const InjectionCard = ({itemData}) => {
-  const { imageUrl, linkUrl, text } = itemData;
+const InjectionCard = ({itemData, handleFilterByTags}) => {
+  const { imageUrl, linkUrl, text, injectionType, news } = itemData;
   const isRedirect = linkUrl && linkUrl !== 'null';
 
   return (
@@ -37,6 +39,11 @@ const InjectionCard = ({itemData}) => {
             <Text variant="bodyLg" as="p">
               {text}
             </Text>
+        }
+
+        {
+          injectionType === INJECTION_TYPES[2].value && news &&
+            <NewsCard newsItem={news} handleFilterByTags={handleFilterByTags}/>
         }
       </a>
     </div>
