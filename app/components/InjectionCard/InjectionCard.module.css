@@ -1,0 +1,23 @@
+.Injection__container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Injection__label {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.Injection__content {
+  width: 100%;
+}
+
+.Injection__media {
+  /*max-height: 110px;*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
