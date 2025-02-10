@@ -139,8 +139,8 @@ const InjectionsTable = ({ injections, page, sortDirection, sortColumn, hasNextP
           resourceName={resourceName}
           itemCount={injectionItems?.length}
           headings={[
-            { title: 'News Id' },
             { title: 'Type' },
+            { title: 'News Id' },
             { title: 'Image Url' },
             { title: 'Link Url' },
             { title: 'Content' },
