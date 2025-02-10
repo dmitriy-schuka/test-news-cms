@@ -17,7 +17,7 @@ export const loader: LoaderFunction = async ({ params, request }: LoaderFunction
 
   const fetchedTags = await getTags();
 
-  if (params?.id !== 'new') {
+  if (params?.id !== 'new' && params?.id !== 'null') {
     const newsData = await getNewsById(Number(params.id));
 
     return json({ newsData: newsData, tagsData: fetchedTags, });

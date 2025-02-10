@@ -3,6 +3,7 @@ import type { Prisma, PrismaClient } from "@prisma/client";
 import type { News, PaginatedNews, NewsCreate, NewsUpdate } from "~/@types/news";
 import type { Tag } from "~/@types/tag";
 import { deleteFile } from "~/services/minio.server";
+import { getSettings } from "~/repositories/settingsRepository.server";
 
 export const getNews = async (_,
   options?: {
@@ -55,12 +56,15 @@ export const getMainPageNews = async (
     sortOrder?: Prisma.SortOrder;
     searchColumn?: string;
     searchValue?: string;
+    regexFilter?: string;
+    searchedPage?: string;
   },
 ): Promise<PaginatedNews | null> => {
   try {
     const page = options?.page ?? 1;
     const sortDirection = options?.sortOrder ?? "desc";
     const sortColumn = options?.sortColumn ?? "id";
+    const searchedPage = options?.searchedPage ?? "LIST";
     const take = 8;
     const skip = page > 1 ? take * (page - 1) : 0;
 
@@ -85,6 +89,13 @@ export const getMainPageNews = async (
           contains: options.searchValue,
           mode: "insensitive",  // Case insensitive search
         },
+      };
+    }
+
+    let regexFilter;
+    if (options?.regexFilter) {
+      regexFilter = {
+        title: { matches: options.regexFilter }, // Применяем фильтрацию по регулярному выражению
       };
     }
 
@@ -115,8 +126,67 @@ export const getMainPageNews = async (
       include: { tags: true, media: true },
     });
 
+    let injectionsPerPage;
+    const settingsData = await getSettings();
+
+    if (searchedPage === 'SEARCH') {
+      injectionsPerPage = settingsData.searchInjections ? Number(settingsData.searchInjections) : 3;
+    } else {
+      injectionsPerPage = settingsData.listInjections ? Number(settingsData.listInjections) : 4;
+    }
+
+    const injections = await prisma.injection.findMany({
+      where: {
+        isDraft: false,
+        OR: [
+          {
+            displayOn: searchedPage,
+          },
+          {
+            displayOn: 'BOTH',
+          }
+        ],
+      },
+      orderBy: { priority: 'desc' },
+      take: injectionsPerPage,
+      skip: page > 1 ? injectionsPerPage * (page - 1) : 0,
+      include: {
+        news: {
+          include: {
+            tags: true,
+            media: true
+          }
+        }
+      }
+    });
+
+    const mixedContent = [];
+    const interval = Math.max(Math.floor(news.length / (injectionsPerPage || 1)), 1);
+
+    let newsIndex = 0;
+    let injectionIndex = 0;
+
+    for (let i = 0; i < news.length + injectionsPerPage; i++) {
+      if (i % (interval + 1) === 1 && injectionIndex < injectionsPerPage && injectionIndex < injections.length) {
+        mixedContent.push(injections[injectionIndex]);
+        injectionIndex++;
+      } else if (newsIndex < news.length) {
+        mixedContent.push(news[newsIndex]);
+        newsIndex++;
+      }
+    }
+
+    // const mixedContent = [...news];
+    // const totalItems = news.length + injectionsPerPage;
+    //
+    // for (let i = 0; i < injectionsPerPage && i < injections.length; i++) {
+    //   const position = Math.round(((i + 1) * totalItems) / (injectionsPerPage + 1));
+    //   const insertIndex = Math.max(0, Math.min(position - 1, mixedContent.length));
+    //   mixedContent.splice(insertIndex, 0, injections[i]);
+    // }
+
     return {
-      news,
+      news: mixedContent,
       latestNews,
       totalNews,
       page,
