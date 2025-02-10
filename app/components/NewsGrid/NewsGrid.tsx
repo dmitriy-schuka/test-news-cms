@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Tag, Box, Grid, Card, Text, MediaCard, BlockStack, InlineStack, Thumbnail, VideoThumbnail } from "@shopify/polaris";
+import { Tag, Box, Grid, Card, Text, BlockStack, InlineStack, Thumbnail, VideoThumbnail } from "@shopify/polaris";
 import { checkIsArray, formatTimeAgo } from "~/utils/common";
 import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from "~/constants/common";
 import NewsMediaCard from "~/components/NewsGrid/components/NewsMediaCard/NewsMediaCard";
@@ -8,6 +8,7 @@ import styles from './NewsGrid.module.css';
 import NewsPagination from "~/components/NewsGrid/components/NewsPagination/NewsPagination";
 import BlockTitle from "~/components/common/BlockTitle/BlockTitle";
 import { useNavigate } from "@remix-run/react";
+import InjectionCard from "~/components/InjectionCard/InjectionCard";
 
 const NewsGrid = (props) => {
   const { news, latestNews, onSort, onNextPage, onPrevPage, hasNextPage, hasPrevPage, totalNews, page, handleFilterByTags } = props;
@@ -67,39 +68,44 @@ const NewsGrid = (props) => {
       news?.map((newsItem, index) => {
         return (
           <Grid.Cell key={`${index}_${newsItem?.title}_news`}>
-            <Card>
-              <BlockStack gap={200}>
-                <div className={styles.NewsCard__wrapper} onClick={() => navigate(`/app/publication/${newsItem?.id}`)}>
-                  <BlockStack gap={200}>
-                    <Text variant="headingLg" as="h5">
-                      {newsItem?.title}
-                    </Text>
+            {
+              newsItem?.hasOwnProperty("injectionType")
+                ? <InjectionCard itemData={newsItem}/>
+                :
+                  <Card>
+                    <BlockStack gap={200}>
+                      <div className={styles.NewsCard__wrapper} onClick={() => navigate(`/app/publication/${newsItem?.id}`)}>
+                        <BlockStack gap={200}>
+                          <Text variant="headingLg" as="h5">
+                            {newsItem?.title}
+                          </Text>
 
-                    {
-                      checkIsArray(newsItem?.media) && renderNewsMedia(newsItem.media)
-                    }
+                          {
+                            checkIsArray(newsItem?.media) && renderNewsMedia(newsItem.media)
+                          }
 
-                    <Text variant="bodyLg" as="p">
-                      <span className={styles.News__content}>
-                        {newsItem?.content}
-                      </span>
-                    </Text>
-                  </BlockStack>
-                </div>
+                          <Text variant="bodyLg" as="p">
+                        <span className={styles.News__content}>
+                          {newsItem?.content}
+                        </span>
+                          </Text>
+                        </BlockStack>
+                      </div>
 
-                <InlineStack gap={100}>
-                  {
-                    checkIsArray(newsItem?.tags) && renderNewsTags(newsItem.tags)
-                  }
-                </InlineStack>
+                      <InlineStack gap={100}>
+                        {
+                          checkIsArray(newsItem?.tags) && renderNewsTags(newsItem.tags)
+                        }
+                      </InlineStack>
 
-                <Text variant="bodySm" as="p">
-                  {
-                    formatTimeAgo(newsItem?.createdAt)
-                  }
-                </Text>
-              </BlockStack>
-            </Card>
+                      <Text variant="bodySm" as="p">
+                        {
+                          formatTimeAgo(newsItem?.createdAt)
+                        }
+                      </Text>
+                    </BlockStack>
+                  </Card>
+            }
           </Grid.Cell>
         )
       })
