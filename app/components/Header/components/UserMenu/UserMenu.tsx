@@ -32,8 +32,8 @@ const UserMenu = () => {
       onAction: () => navigate('/app/rss'),
     },
     {
-      content: 'Advertisements',
-      onAction: () => navigate('/app/advertisements'),
+      content: 'Injections',
+      onAction: () => navigate('/app/injections/list'),
     },
     {
       content: 'My account',
