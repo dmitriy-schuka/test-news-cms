@@ -23,3 +23,33 @@ export const DEVICES_BREAKPOINTS = {
   tablet: 768,
   desktop: 1024,
 };
+
+export const INJECTION_TYPES = [
+  {
+    label: "Image",
+    value: "IMAGE",
+  },
+  {
+    label: "Text",
+    value: "TEXT",
+  },
+  {
+    label: "News",
+    value: "NEWS",
+  },
+];
+
+export const INJECTION_DISPLAY_ON_TYPES = [
+  {
+    label: "List",
+    value: "LIST",
+  },
+  {
+    label: "Search page",
+    value: "SEARCH",
+  },
+  {
+    label: "List and Search page",
+    value: "BOTH",
+  },
+];
