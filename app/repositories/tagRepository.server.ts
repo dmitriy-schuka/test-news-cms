@@ -6,7 +6,7 @@ export const getTags = async (options?: {
   sortColumn?: string;
   page?: number;
   sortOrder?: Prisma.SortOrder;
-}): Promise<Tag | null> => {
+}): Promise<Tag[] | null> => {
   try {
     const page = options?.page ?? 1;
     const sortDirection = options?.sortOrder ?? "desc";
@@ -37,7 +37,7 @@ export const getTags = async (options?: {
   }
 };
 
-export const getTagById = async (id: string): Promise<Tag | null> => {
+export const getTagById = async (id: number): Promise<Tag | null> => {
   try {
     return prisma.tag.findUnique({
       where: { id },
@@ -67,7 +67,7 @@ export const createTag = async (data: TagCreate): Promise<Tag> => {
   }
 };
 
-export const updateTag = async (id: string, data: TagUpdate): Promise<Tag> => {
+export const updateTag = async (id: number, data: TagUpdate): Promise<Tag> => {
   try {
     return prisma.tag.update({
       where: { id },
@@ -78,7 +78,7 @@ export const updateTag = async (id: string, data: TagUpdate): Promise<Tag> => {
   }
 };
 
-export const deleteTag = async (id: string): Promise<Tag> => {
+export const deleteTag = async (id: number): Promise<Tag> => {
   try {
     return prisma.tag.delete({
       where: { id },

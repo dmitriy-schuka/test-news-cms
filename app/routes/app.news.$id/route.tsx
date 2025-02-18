@@ -238,16 +238,10 @@ export default function News() {
       title={"Create/edit news"}
       backAction={{
         content: 'Go back',
-        // url: '#',
         onAction() {
           navigate(-1)
         }
       }}
-      // titleHidden
-      // primaryAction={{
-      //   content: "Create news",
-      //   onAction: () => {},
-      // }}
     >
       <NewsForm
         newsData={newsData}
