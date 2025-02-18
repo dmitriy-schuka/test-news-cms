@@ -87,6 +87,7 @@ model RssSource {
   fieldMapping  Json                         // Matching fields with news fields
   stopTags      Json                         // Tags that stop import if present
   importInterval Int          @default(60)   // Interval in minutes
+  fetchedAt     DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   RssNews       RssNews[]
