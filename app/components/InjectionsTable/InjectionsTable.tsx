@@ -88,7 +88,7 @@ const InjectionsTable = ({ injections, page, sortDirection, sortColumn, hasNextP
                 </Box>
               </IndexTable.Cell>
 
-              <IndexTable.Cell flush>
+              <IndexTable.Cell>
                 <Box maxWidth={"200px"} width={"100%"}>
                   {/*<p className={"truncate"}>*/}
                   <p className={styles.Text__truncate}>

@@ -105,6 +105,7 @@ export const getMainPageNews = async (
         not: latestNews?.id
       },
       ...searchFilter,
+      ...regexFilter,
     };
 
     if (newsTags && Array.isArray(newsTags) && newsTags.length > 0) {
@@ -175,15 +176,6 @@ export const getMainPageNews = async (
         newsIndex++;
       }
     }
-
-    // const mixedContent = [...news];
-    // const totalItems = news.length + injectionsPerPage;
-    //
-    // for (let i = 0; i < injectionsPerPage && i < injections.length; i++) {
-    //   const position = Math.round(((i + 1) * totalItems) / (injectionsPerPage + 1));
-    //   const insertIndex = Math.max(0, Math.min(position - 1, mixedContent.length));
-    //   mixedContent.splice(insertIndex, 0, injections[i]);
-    // }
 
     return {
       news: mixedContent,

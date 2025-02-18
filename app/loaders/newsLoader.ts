@@ -21,6 +21,7 @@ const prepareNewsQuery = (request) => {
       sortColumn: url.searchParams.get("column") ?? "id",
       searchColumn: url.searchParams.get("searchColumn"),
       searchValue: url.searchParams.get("searchValue"),
+      regexFilter: url.searchParams.get("regexFilter"),
     }
   ];
 }
