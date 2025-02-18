@@ -1,0 +1,10 @@
+.NewsCard__content {
+  display: block;
+  display: -webkit-box;
+  /*height: 2.6em; */
+  /*line-height: 1.3em;*/
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
