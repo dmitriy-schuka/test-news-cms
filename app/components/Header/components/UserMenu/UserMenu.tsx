@@ -29,7 +29,7 @@ const UserMenu = () => {
     },
     {
       content: 'RSS imports',
-      onAction: () => navigate('/app/rss'),
+      onAction: () => navigate('/app/rss-sources/list'),
     },
     {
       content: 'Injections',
