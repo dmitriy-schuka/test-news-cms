@@ -1,28 +1,27 @@
 import { json } from "@remix-run/node";
 import type { MetaFunction, LoaderFunction } from "@remix-run/node";
-import { Outlet, useLoaderData, useLocation, useSearchParams, useSubmit } from "@remix-run/react";
-import { Box, Page, Layout, InlineStack, BlockStack, InlineGrid, Grid } from "@shopify/polaris";
-import { sessionStorage } from "~/services/session.server";
+import { useLoaderData, useSearchParams, useSubmit } from "@remix-run/react";
+import { Page, BlockStack } from "@shopify/polaris";
 import NewsGrid from "~/components/NewsGrid/NewsGrid";
-import { useCallback, useEffect, useState } from "react";
-import { getNews } from "~/repositories/newsRepository.server";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { mainPageNewsLoader } from "~/loaders/newsLoader";
 
-import SearchBar from "~/components/common/SearchBar/SearchBar";
 import NewsMenu from "~/components/NewsMenu/NewsMenu";
 import styles from "./styles.module.css";
+import { getAllRssNews } from "~/repositories/rssNewsRepository.server";
+import RssNewsCard from "~/components/RssNewsCard/RssNewsCard";
 
 export const loader = async ({ request }: { request: Request }) => {
   const fetchedNews = await mainPageNewsLoader(request);
+  const fetchedRssNews = await getAllRssNews();
 
-  return json({ fetchedNews: fetchedNews });
+  return json({ fetchedNews, fetchedRssNews });
 };
 
 export default function NewsMainPage() {
   const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const { fetchedNews } = useLoaderData<typeof loader>();
+  const { fetchedNews, fetchedRssNews } = useLoaderData<typeof loader>();
   const submit = useSubmit();
 
   useEffect(() => {
@@ -74,6 +73,16 @@ export default function NewsMainPage() {
     });
   }, [newsData, setSearchParams]);
 
+  const renderRssNews = useMemo(() => {
+    return (
+      fetchedRssNews.map((rssNews, index) => {
+        return (
+          <RssNewsCard key={`RssNews_${index}`} rssNews={rssNews}/>
+        )
+      })
+    )
+  }, [fetchedRssNews])
+
   return (
     <Page
       title={"News"}
@@ -81,9 +90,16 @@ export default function NewsMainPage() {
       fullWidth
     >
       <div className={styles.NewsContent__container}>
-        <NewsMenu
-          handleSearch={handleSearch}
-        />
+        <BlockStack gap={400}>
+          <NewsMenu
+            handleSearch={handleSearch}
+          />
+
+          {
+            fetchedRssNews && fetchedRssNews?.length > 0 &&
+              renderRssNews
+          }
+        </BlockStack>
 
         <NewsGrid
           news={newsData?.news}
