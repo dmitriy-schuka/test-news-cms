@@ -22,7 +22,7 @@ model User {
   role          String        @default("publicist")
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  News      News[]
+  News          News[]
 }
 
 model News {
@@ -77,6 +77,33 @@ model Injection {
   regex         String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+}
+
+model RssSource {
+  id            Int           @id @default(autoincrement())
+  name          String
+  url           String        @unique
+  isActive      Boolean       @default(true)
+  fieldMapping  Json                         // Matching fields with news fields
+  stopTags      Json                         // Tags that stop import if present
+  importInterval Int          @default(60)   // Interval in minutes
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  RssNews       RssNews[]
+}
+
+model RssNews {
+  id              Int           @id @default(autoincrement())
+  title           String?
+  content         String?
+  mediaUrl        String?
+  rssLink         String?
+  published       Boolean       @default(false)
+  rssSourceId     Int?
+  publicatedDate  String?
+  rssSource       RssSource?    @relation(fields: [rssSourceId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 enum InjectionType {
