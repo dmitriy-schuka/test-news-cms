@@ -129,7 +129,7 @@ const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPrev
                 </Text>
               </IndexTable.Cell>
 
-              <IndexTable.Cell flush>
+              <IndexTable.Cell>
                 <Box maxWidth={"360px"} width={"100%"}>
                   {/*<p className={"truncate"}>*/}
                   <p className={styles.Text__truncate}>
