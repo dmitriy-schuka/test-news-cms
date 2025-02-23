@@ -1,11 +1,16 @@
-import React from 'react';
-import { checkIsArray } from "~/utils/common";
+import React, {useMemo} from "react";
+import type {FC} from "react";
 import { MediaCard, Text, BlockStack } from "@shopify/polaris";
 import { VALID_VIDEO_TYPES } from "~/constants/common";
 import BlockTitle from "~/components/common/BlockTitle/BlockTitle";
+import type { News } from "~/@types/news";
 
-const NewsMediaCard = ({ newsData }) => {
-  const newsMedia = checkIsArray(newsData?.media) && newsData.media[0];
+interface INewsMediaCardProps {
+  newsData: News;
+}
+
+const NewsMediaCard: FC<INewsMediaCardProps> = ({ newsData }) => {
+  const newsMedia = useMemo(() => newsData?.media?.[0], [newsData.media]);
 
   return (
     <BlockStack>
@@ -13,7 +18,7 @@ const NewsMediaCard = ({ newsData }) => {
 
       <MediaCard
         title={
-          <Text variant="heading2xl" as="h3">
+          <Text variant="heading2xl" as="h3" id="news-title-latest">
             {newsData?.title}
           </Text>
         }
@@ -23,27 +28,33 @@ const NewsMediaCard = ({ newsData }) => {
           </Text>
         }
         portrait
-        size={"small"}
+        size="small"
+        aria-labelledby="news-title-latest"
       >
         {
-          VALID_VIDEO_TYPES.includes(newsMedia?.mediaType)
-            ?
-              <video
-                src={newsMedia?.url}
-                autoPlay
-                loop
-              />
-            :
-              <img
-                alt=""
-                width="100%"
-                height="100%"
-                style={{
-                  objectFit: 'cover',
-                  objectPosition: 'center',
-                }}
-                src={newsMedia?.url}
-              />
+          newsMedia &&
+            (
+              VALID_VIDEO_TYPES.includes(newsMedia?.mediaType)
+                ?
+                <video
+                  src={newsMedia?.url}
+                  autoPlay
+                  loop
+                  aria-label="News video"
+                />
+                :
+                <img
+                  alt=""
+                  width="100%"
+                  height="100%"
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                  src={newsMedia?.url ?? ""}
+                  loading="lazy"
+                />
+            )
         }
       </MediaCard>
     </BlockStack>
