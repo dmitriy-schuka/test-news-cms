@@ -1,39 +1,55 @@
-import React, { useCallback } from 'react';
+import type {FC} from "react";
+import React, { useMemo, useCallback } from 'react';
 import { BlockStack, Card, InlineStack, Tag, Text } from "@shopify/polaris";
 import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from "~/constants/common";
-import { checkIsArray, formatTimeAgo } from "~/utils/common";
+import { formatTimeAgo } from "~/utils/common";
 import { useNavigate } from "@remix-run/react";
 import DefaultImage from "~/assets/images/default-image.jpg";
+import type { News } from "~/@types/news";
 import styles from "./NewsCard.module.css";
 
-const NewsCard = ({ newsItem, handleFilterByTags }) => {
+interface INewsCardProps {
+  newsItem: News;
+  handleFilterByTags: (tags: string[]) => void;
+  newsIndex?: number;
+}
+
+const NewsCard: FC<INewsCardProps> = ({ newsItem, handleFilterByTags, newsIndex }) => {
   const navigate = useNavigate();
 
-  const renderNewsMedia = useCallback((newsMedia) => {
+  const newsMediaList = useMemo(() => {
+    if (!newsItem?.media?.length) {
+      return null;
+    }
+
     return (
-      newsMedia?.map((mediaItem, index) => {
+      newsItem.media.map((mediaItem, index) => {
         const mediaUrl = mediaItem?.url || DefaultImage;
+        const mediaId = `news-media-${newsIndex}-${index}`;
 
         switch (true) {
           case VALID_IMAGE_TYPES.includes(mediaItem?.mediaType):
             return (
-              <div key={`${index}-${mediaItem?.url}`} className={styles.NewsCard__media}>
+              <div key={mediaId} className={styles.NewsCard__media}>
                 <img
                   src={mediaUrl}
                   alt="News media"
                   style={{maxHeight: "inherit"}}
+                  loading="lazy"
+                  aria-labelledby={`news-title-${newsIndex}`}
                 />
               </div>
             )
           case VALID_VIDEO_TYPES.includes(mediaItem?.mediaType):
             return (
-              <div key={`${index}-${mediaItem?.url}`} className={styles.NewsCard__media}>
+              <div key={mediaId} className={styles.NewsCard__media}>
                 <BlockStack inlineAlign={"start"} align={"center"}>
                   <video
                     src={mediaUrl}
                     autoPlay
                     loop
                     className={styles.NewsCard__media}
+                    aria-labelledby={`news-title-${newsIndex}`}
                   />
                 </BlockStack>
               </div>
@@ -43,11 +59,15 @@ const NewsCard = ({ newsItem, handleFilterByTags }) => {
         }
       })
     );
-  }, [newsItem]);
+  }, [newsItem.media, newsIndex]);
 
-  const renderNewsTags = useCallback((tags) => {
+  const newsTagsList = useMemo(() => {
+    if (!newsItem?.tags?.length) {
+      return null;
+    }
+
     return (
-      tags?.map((tag, index) => (
+      newsItem.tags.map((tag, index) => (
         <Tag
           key={`${index}_${tag?.name}`} url="#"
           onClick={() => handleFilterByTags([tag?.id])}
@@ -56,20 +76,24 @@ const NewsCard = ({ newsItem, handleFilterByTags }) => {
         </Tag>
       ))
     )
-  }, [newsItem, handleFilterByTags]);
+  }, [newsItem.tags, handleFilterByTags]);
 
   return (
     <Card>
       <BlockStack gap={200}>
-        <div className={styles.NewsCard__wrapper} onClick={() => navigate(`/app/publication/${newsItem?.id}`)}>
+        <div
+          className={styles.NewsCard__wrapper}
+          onClick={() => navigate(`/app/publication/${newsItem?.id}`)}
+          role="button"
+          tabIndex={0}
+          aria-labelledby={`news-title-${newsIndex}`}
+        >
           <BlockStack gap={200}>
-            <Text variant="headingLg" as="h5">
+            <Text id={`news-title-${newsIndex}`} variant="headingLg" as="h5">
               {newsItem?.title}
             </Text>
 
-            {
-              checkIsArray(newsItem?.media) && renderNewsMedia(newsItem.media)
-            }
+            { newsMediaList }
 
             <Text variant="bodyLg" as="p">
               <span className={styles.NewsCard__content}>
@@ -80,9 +104,7 @@ const NewsCard = ({ newsItem, handleFilterByTags }) => {
         </div>
 
         <InlineStack gap={100}>
-          {
-            checkIsArray(newsItem?.tags) && renderNewsTags(newsItem.tags)
-          }
+          { newsTagsList }
         </InlineStack>
 
         <Text variant="bodySm" as="p">
