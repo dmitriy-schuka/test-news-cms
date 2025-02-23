@@ -17,7 +17,7 @@ const checkIfBucketExist = async () => {
     return true;
   } else {
     /** Create Bucket in minio if doesn't exist */
-    // await minioClient.makeBucket(bucket, 'us-east-1');
+    await minioClient.makeBucket(bucket, 'us-east-1');
 
     return false;
   }
@@ -34,9 +34,6 @@ export const uploadFile = async (fileName: string, file: File) => {
 
     return { fileName, res };
   } catch (err) {
-    console.log('Error in upload file:')
-    console.log(err)
-
     return null;
   }
 };
@@ -48,28 +45,4 @@ export const deleteFile = async (fileName: string) => {
     console.log('Error in delete file:')
     console.log(err)
   }
-};
-
-
-
-export const getPresignedUrl = async (fileName: string, expiresInSeconds = 86400) => {
-  try {
-    const url = await minioClient.presignedGetObject(bucketName, fileName, expiresInSeconds);
-    return { url };
-  } catch (error) {
-    console.error("Error generating presigned URL:", error);
-    throw new Error("Failed to generate presigned URL");
-  }
-};
-
-export const downloadFile = async (fileName: string, downloadPath: string) => {
-  const stream = await minioClient.getObject(bucketName, fileName);
-  stream.pipe(require("fs").createWriteStream(downloadPath));
-};
-
-export const listFiles = async (bucketName: string) => {
-  const stream = minioClient.listObjects(bucketName, "", true);
-  const files: string[] = [];
-  stream.on("data", (obj) => files.push(obj.name));
-  stream.on("end", () => console.log(files));
 };
