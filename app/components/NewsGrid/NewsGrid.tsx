@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import type { FC } from "react";
 import { Box, Grid, BlockStack } from "@shopify/polaris";
 import NewsMediaCard from "~/components/NewsGrid/components/NewsMediaCard/NewsMediaCard";
 import NewsPagination from "~/components/NewsGrid/components/NewsPagination/NewsPagination";
@@ -6,8 +7,22 @@ import BlockTitle from "~/components/common/BlockTitle/BlockTitle";
 import { useNavigate } from "@remix-run/react";
 import InjectionCard from "~/components/InjectionCard/InjectionCard";
 import NewsCard from "~/components/NewsCard/NewsCard";
+import type { News } from "~/@types/news";
 
-const NewsGrid = (props) => {
+interface INewsGridProps {
+  news: Array<News>;
+  latestNews?: News;
+  onSort: (column?: string, direction?: "asc" | "desc") => void;
+  onNextPage: () => void;
+  onPrevPage: () => void;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  totalNews: number;
+  page: number;
+  handleFilterByTags: (tags?: string) => void;
+}
+
+const NewsGrid: FC<INewsGridProps> = (props) => {
   const { news, latestNews, onSort, onNextPage, onPrevPage, hasNextPage, hasPrevPage, totalNews, page, handleFilterByTags } = props;
   const navigate = useNavigate();
 
@@ -19,21 +34,24 @@ const NewsGrid = (props) => {
             {
               newsItem?.hasOwnProperty("injectionType")
                 ? <InjectionCard itemData={newsItem} handleFilterByTags={handleFilterByTags}/>
-                : <NewsCard newsItem={newsItem} handleFilterByTags={handleFilterByTags}/>
+                : <NewsCard newsItem={newsItem} handleFilterByTags={handleFilterByTags} newsIndex={index}/>
             }
           </Grid.Cell>
         )
       })
     )
-  }, [news]);
+  }, [news, handleFilterByTags]);
 
   return (
     <Box paddingBlockStart={400}>
       <BlockStack gap={800}>
         {
           latestNews &&
-            <div style={{cursor: "pointer"}} onClick={() => navigate(`/app/publication/${latestNews?.id}`)}>
-              <NewsMediaCard newsData={latestNews} />
+            <div
+              style={{cursor: "pointer"}}
+              onClick={() => navigate(`/app/publication/${latestNews?.id}`)}
+            >
+              <NewsMediaCard role="article" newsData={latestNews}/>
             </div>
         }
 

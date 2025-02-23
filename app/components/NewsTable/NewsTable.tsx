@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { FC } from "react";
 import {
   Box,
   Card,
@@ -6,8 +7,6 @@ import {
   BlockStack,
   Text,
   IndexTable,
-  useIndexResourceState,
-  Pagination,
   Thumbnail,
   EmptySearchResult,
   Tag,
@@ -16,11 +15,22 @@ import {
 import { useSearchParams } from "@remix-run/react";
 import { checkIsArray } from "~/utils/common";
 import type { Media } from "~/@types/media";
+import type { News } from "~/@types/news";
 import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from "~/constants/common";
 import DefaultImage from '~/assets/images/default-image.jpg';
 import styles from './NewsTable.module.css';
 
-const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPreviousPage, handleNewsEdit }) => {
+interface INewsTable {
+  news: Array<News>;
+  page: number;
+  sortDirection: string;
+  sortColumn: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  handleNewsEdit: (id: number) => void;
+}
+
+const NewsTable: FC<INewsTable> = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPreviousPage, handleNewsEdit }) => {
   const [sortedNews, setSortedNews] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -43,21 +53,16 @@ const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPrev
     [setSearchParams],
   );
 
-  const handleNextPage = useCallback(() => {
+  const changePage = useCallback((offset: number) => {
     setSearchParams({
       sort: sortDirection,
       column: sortColumn,
-      page: String(page + 1),
+      page: String((page || 1) + offset),
     });
-  }, [page, sortDirection, sortColumn, setSearchParams]);
+  }, [sortDirection, sortColumn, page, setSearchParams]);
 
-  const handlePrevPage = useCallback(() => {
-    setSearchParams({
-      sort: sortDirection,
-      column: sortColumn,
-      page: String(page - 1),
-    });
-  }, [page, sortDirection, sortColumn, setSearchParams]);
+  const handleNextPage = () => changePage(1);
+  const handlePrevPage = () => changePage(-1);
 
   const emptyStateMarkup = (
     <EmptySearchResult
@@ -131,7 +136,6 @@ const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPrev
 
               <IndexTable.Cell>
                 <Box maxWidth={"360px"} width={"100%"}>
-                  {/*<p className={"truncate"}>*/}
                   <p className={styles.Text__truncate}>
                     {content}
                   </p>
@@ -187,8 +191,8 @@ const NewsTable = ({ news, page, sortDirection, sortColumn, hasNextPage, hasPrev
           pagination={{
             hasPrevious: hasPreviousPage,
             hasNext: hasNextPage,
-            onNext: () => handleNextPage(),
-            onPrevious: () => handlePrevPage(),
+            onNext: handleNextPage,
+            onPrevious: handlePrevPage,
           }}
           emptyState={emptyStateMarkup}
           onSort={handleSort}
