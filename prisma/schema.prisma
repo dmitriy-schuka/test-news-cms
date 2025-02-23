@@ -37,6 +37,7 @@ model News {
   injection     Injection[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
 }
 
 model Tag {

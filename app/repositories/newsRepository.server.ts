@@ -1,7 +1,6 @@
 import { prisma } from "~/db/prisma.server";
-import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import type { News, PaginatedNews, NewsCreate, NewsUpdate } from "~/@types/news";
-import type { Tag } from "~/@types/tag";
 import { deleteFile } from "~/services/minio.server";
 import { getSettings } from "~/repositories/settingsRepository.server";
 
@@ -71,6 +70,7 @@ export const getMainPageNews = async (
     const latestNews = await prisma.news.findFirst({
       where: {
         published: true,
+        deletedAt: null,
       },
       orderBy: {
         createdAt: 'desc',
@@ -95,7 +95,7 @@ export const getMainPageNews = async (
     let regexFilter;
     if (options?.regexFilter) {
       regexFilter = {
-        title: { matches: options.regexFilter }, // Применяем фильтрацию по регулярному выражению
+        title: { matches: options.regexFilter },
       };
     }
 
@@ -302,10 +302,29 @@ export const deleteNews = async (id: string, newsTags: string[], oldMediaData): 
       });
     }
 
-    return prisma.news.delete({
+    return prisma.news.update({
       where: { id },
+      data: { deletedAt: new Date() },
     });
+
+    // return prisma.news.delete({
+    //   where: { id },
+    // });
   } catch (err) {
     throw new Error(`Error deleting news: ${err}`);
   }
 };
+
+export const restoreNews = async (newsId: number): Promise<News> => {
+  try {
+    return prisma.news.update({
+      where: { id: newsId },
+      data: {
+        deletedAt: null,
+        published: false,
+      },
+    });
+  } catch (err) {
+    throw new Error(`Error restoring news: ${err}`);
+  }
+}

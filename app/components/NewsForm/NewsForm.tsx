@@ -22,10 +22,11 @@ interface INewsFormProps {
   handleCreateNews: () => void;
   handleEditNews: () => void;
   handleDeleteNews: () => void;
+  handleRestoreNews: () => void;
 }
 
 const NewsForm: FC<INewsFormProps> = (props) => {
-  const { newsData, handleChange, tags, handleCreateNews, handleEditNews, handleDeleteNews } = props;
+  const { newsData, handleChange, tags, handleCreateNews, handleEditNews, handleDeleteNews, handleRestoreNews } = props;
   const isEditing = Boolean(newsData?.id);
 
   return (
@@ -69,7 +70,11 @@ const NewsForm: FC<INewsFormProps> = (props) => {
                   isEditing
                     ?
                       <InlineStack align={"space-between"}>
-                        <Button variant="primary" tone={"critical"} onClick={handleDeleteNews}>Delete</Button>
+                        {
+                          newsData?.deletedAt
+                            ? <Button onClick={handleRestoreNews}>Restore</Button>
+                            : <Button variant="primary" tone={"critical"} onClick={handleDeleteNews}>Delete</Button>
+                        }
                         <Button variant="primary" submit>Edit</Button>
                       </InlineStack>
                     :
