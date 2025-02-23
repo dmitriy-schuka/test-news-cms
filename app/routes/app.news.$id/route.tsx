@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
 import { json, redirect } from "@remix-run/node";
-// import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import type { ActionFunction, LoaderFunction, ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { Page } from "@shopify/polaris";

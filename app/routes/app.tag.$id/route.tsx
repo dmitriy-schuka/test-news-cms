@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { json, redirect } from "@remix-run/node";
-// import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import type { ActionFunction, LoaderFunction, ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { Page } from "@shopify/polaris";
@@ -9,6 +8,7 @@ import type { Tag } from "~/@types/tag";
 import { createTag, deleteTag, getTagById, updateTag } from "~/repositories/tagRepository.server";
 
 export const loader: LoaderFunction = async ({ params, request }: LoaderFunctionArgs) => {
+  // TODO: uncomment for production
   // await checkUserAuth(request);
 
   if (params?.id !== 'new') {
@@ -20,52 +20,50 @@ export const loader: LoaderFunction = async ({ params, request }: LoaderFunction
 };
 
 export const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
-  const body = await request.formData();
+  try {
+    const body = await request.formData();
 
-  const tagId = body.get("id");
-  const tagName = body.get("name")?.toString();
+    const tagId = body.get("id");
+    const tagName = body.get("name")?.toString();
 
-  switch (request.method) {
-    case "POST": {
-      const tag = await createTag({
-        name: tagName,
-      });
+    switch (request.method) {
+      case "POST": {
+        const tag = await createTag({
+          name: tagName,
+        });
 
-      if (tag?.id) {
-        // return json({ result: "ok", tagData: tag });
+        if (tag?.id) {
+          return redirect("/app/tags/list");
+        } else {
+          return json({ error: "Error create tag data" }, { status: 400 });
+        }
+      }
+      case "PUT": {
+        const tag = await updateTag(Number(tagId),{
+          name: tagName,
+        });
 
-        return redirect("/app/tags/list");
-      } else {
-        return json({ error: "Error create tag data" });
+        if (tag?.id) {
+          return redirect("/app/tags/list");
+        } else {
+          return json({ error: "Error update tag data" }, { status: 400 });
+        }
+      }
+      case "DELETE": {
+        const tag = await deleteTag(Number(tagId));
+
+        if (tag?.id) {
+          return redirect("/app/tags/list");
+        } else {
+          return json({ error: "Error delete tag" }, { status: 400 });
+        }
+      }
+      default: {
+        return json({ error: "Method not allowed" }, { status: 405 });
       }
     }
-    case "PUT": {
-      const tag = await updateTag(Number(tagId),{
-        name: tagName,
-      });
-
-      if (tag?.id) {
-        // return json({ result: "ok", tagData: tag });
-
-        return redirect("/app/tags/list");
-      } else {
-        return json({ error: "Error update tag data" });
-      }
-    }
-    case "DELETE": {
-      const tag = await deleteTag(Number(tagId));
-
-      if (tag?.id) {
-        // return json({ result: "ok" });
-
-        return redirect("/app/tags/list");
-      } else {
-        return json({ error: "Error delete tag" });
-      }
-    }
-    default: {
-      return json();
-    }
+  } catch (err) {
+    return json({ error: "Internal Server Error", message: err }, { status: 500 });
   }
 };
 

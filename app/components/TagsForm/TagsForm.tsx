@@ -1,4 +1,5 @@
 import React from 'react';
+import type {FC} from "react";
 import {
   Button,
   Card,
@@ -7,8 +8,17 @@ import {
   InlineStack,
   TextField
 } from "@shopify/polaris";
+import { Tag } from "~/@types/tag";
 
-const TagsForm = (props) => {
+interface ITagsFormProps {
+  tagData: Tag;
+  handleChange: (value: any, field: string) => void;
+  handleCreateTag: () => void;
+  handleEditTag: () => void;
+  handleDeleteTag: () => void;
+}
+
+const TagsForm: FC<ITagsFormProps> = (props) => {
   const { tagData, handleChange, handleCreateTag, handleEditTag, handleDeleteTag } = props;
 
   return (
