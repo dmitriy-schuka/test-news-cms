@@ -46,21 +46,16 @@ const InjectionsTable: FC<InjectionsTableProps> = ({ injections, page, sortDirec
     [setSearchParams],
   );
 
-  const handleNextPage = useCallback(() => {
+  const changePage = useCallback((offset: number) => {
     setSearchParams({
       sort: sortDirection,
       column: sortColumn,
-      page: String(page + 1),
+      page: String((page || 1) + offset),
     });
-  }, [page, sortDirection, sortColumn, setSearchParams]);
+  }, [sortDirection, sortColumn, page, setSearchParams]);
 
-  const handlePrevPage = useCallback(() => {
-    setSearchParams({
-      sort: sortDirection,
-      column: sortColumn,
-      page: String(page - 1),
-    });
-  }, [page, sortDirection, sortColumn, setSearchParams]);
+  const handleNextPage = () => changePage(1);
+  const handlePrevPage = () => changePage(-1);
 
   const rowMarkup = useMemo(() => {
     if (checkIsArray(injectionItems)) {
