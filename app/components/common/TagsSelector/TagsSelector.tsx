@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import type { FC } from "react";
 import {
   BlockStack,
   InlineStack,
@@ -8,12 +9,19 @@ import {
   Combobox,
   Listbox,
 } from "@shopify/polaris";
-import {SearchIcon} from '@shopify/polaris-icons';
+import { SearchIcon } from '@shopify/polaris-icons';
 import { checkIsArray } from "~/utils/common";
+import type { Tag as TagType } from "~/@types/tag";
 
-const TagsSelector = ({tags, newsTags, handleChange}) => {
+interface ITagsSelectorProps {
+  tags: TagType[];
+  newsTags: string[];
+  handleChange: (value: string[], field: string) => void;
+}
+
+const TagsSelector: FC<ITagsSelectorProps> = ({tags, newsTags, handleChange}) => {
   const deselectedOptions = useMemo(() => {
-    if (tags && Array.isArray(tags) && tags.length > 0) {
+    if (checkIsArray(tags)) {
       return tags.map(({id, name}) => ({
         value: id,
         label: name
@@ -24,7 +32,7 @@ const TagsSelector = ({tags, newsTags, handleChange}) => {
   }, [tags]);
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState<string>('');
   const [options, setOptions] = useState(deselectedOptions);
 
   useEffect(() => {
@@ -132,10 +140,8 @@ const TagsSelector = ({tags, newsTags, handleChange}) => {
         }
       >
         {
-          optionsMarkup
-            ?
-              <Listbox onSelect={updateSelection}>{optionsMarkup}</Listbox>
-            : null
+          optionsMarkup &&
+            <Listbox onSelect={updateSelection}>{optionsMarkup}</Listbox>
         }
       </Combobox>
 

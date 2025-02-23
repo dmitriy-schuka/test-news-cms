@@ -1,4 +1,5 @@
 import React from 'react';
+import type {FC} from "react";
 import {
   Box,
   Button,
@@ -11,16 +12,28 @@ import {
 } from "@shopify/polaris";
 import MediaInput from "~/components/common/MediaInput/MediaInput";
 import TagsSelector from "~/components/common/TagsSelector/TagsSelector";
+import type { News } from "~/@types/news";
+import type { Tag } from "~/@types/tag";
 
-const NewsForm = (props) => {
+interface INewsFormProps {
+  newsData: News;
+  handleChange: (value: any, field: string) => void;
+  tags: Tag[];
+  handleCreateNews: () => void;
+  handleEditNews: () => void;
+  handleDeleteNews: () => void;
+}
+
+const NewsForm: FC<INewsFormProps> = (props) => {
   const { newsData, handleChange, tags, handleCreateNews, handleEditNews, handleDeleteNews } = props;
+  const isEditing = Boolean(newsData?.id);
 
   return (
     <InlineStack align={"center"} blockAlign={"center"}>
       <div style={{maxWidth: "500px", width: "100%"}}>
         <Box>
           <Card>
-            <Form onSubmit={newsData?.id ? handleEditNews : handleCreateNews}>
+            <Form onSubmit={isEditing ? handleEditNews : handleCreateNews}>
               <FormLayout>
                 <MediaInput newsData={newsData} handleChange={handleChange}/>
 
@@ -53,7 +66,7 @@ const NewsForm = (props) => {
                 />
 
                 {
-                  newsData?.id
+                  isEditing
                     ?
                       <InlineStack align={"space-between"}>
                         <Button variant="primary" tone={"critical"} onClick={handleDeleteNews}>Delete</Button>

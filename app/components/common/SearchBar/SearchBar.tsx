@@ -1,13 +1,20 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import type { FC } from "react";
+import NavPopover from "~/components/common/NavPopover/NavPopover";
 import { SearchIcon } from '@shopify/polaris-icons';
 import { Button, InlineStack, TextField } from "@shopify/polaris";
-import NavPopover from "~/components/common/NavPopover/NavPopover";
 import { NEWS_MENU_ITEMS } from "~/constants/common";
 import { NAV_BLOCK_CONTENT } from "~/constants/contents";
 import { useNavigate } from "@remix-run/react";
 
-const SearchBar = ({placeholder = "Search", handleSearch, isMobile}) => {
-  const [value, setValue] = useState("");
+interface ISearchBarProps {
+  placeholder?: string;
+  handleSearch: (field: string, value: string) => void;
+  isMobile: boolean;
+}
+
+const SearchBar: FC<ISearchBarProps> = ({placeholder = "Search", handleSearch, isMobile}) => {
+  const [value, setValue] = useState<string>("");
   const navigate = useNavigate();
 
   const handleSearchChange = useCallback(
@@ -33,7 +40,7 @@ const SearchBar = ({placeholder = "Search", handleSearch, isMobile}) => {
         }
       }))
     );
-  }, []);
+  }, [navigate]);
 
   return (
     <InlineStack wrap={false} gap={200} blockAlign={"center"}>
@@ -44,9 +51,6 @@ const SearchBar = ({placeholder = "Search", handleSearch, isMobile}) => {
         onChange={handleSearchChange}
         placeholder={placeholder}
         autoComplete={"off"}
-        // connectedRight={
-        //   <Button icon={SearchIcon} onClick={onSearch}/>
-        // }
       />
 
       <Button icon={SearchIcon} onClick={onSearch}/>

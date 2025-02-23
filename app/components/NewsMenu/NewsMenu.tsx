@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import type { FC } from "react";
 import { useNavigate } from "@remix-run/react";
 import useBreakpoints from "~/hooks/useBreakpoints";
 import SearchBar from "~/components/common/SearchBar/SearchBar";
@@ -7,7 +8,11 @@ import { NEWS_MENU_ITEMS } from "~/constants/common";
 import BlockTitle from "~/components/common/BlockTitle/BlockTitle";
 import { NAV_BLOCK_CONTENT } from "~/constants/contents";
 
-const NewsMenu = (props) => {
+interface INewsMenuProps {
+  handleSearch: (value: any, field: string) => void;
+}
+
+const NewsMenu: FC<INewsMenuProps> = (props) => {
   const { handleSearch } = props;
   const navigate = useNavigate();
   const { isMobile } = useBreakpoints();
@@ -28,7 +33,7 @@ const NewsMenu = (props) => {
         </Button>
       ))
     );
-  }, []);
+  }, [navigate]);
 
   return (
     <Box minWidth={"200px"} paddingInlineEnd={200} paddingBlockStart={400}>
