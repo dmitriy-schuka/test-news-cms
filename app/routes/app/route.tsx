@@ -1,13 +1,13 @@
 import { json } from "@remix-run/node";
-import type { MetaFunction, LoaderFunction } from "@remix-run/node";
-import { Outlet, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/node";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import Header from "~/components/Header/Header";
 import { sessionStorage } from "~/services/session.server";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Latest world news" },
+    { name: "description", content: "News from around the world." },
   ];
 };
 

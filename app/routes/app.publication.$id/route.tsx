@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { json } from "@remix-run/node";
-import type { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useNavigate } from "@remix-run/react";
 import { Page } from "@shopify/polaris";
+import type { MetaFunction, LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { getNewsById } from "~/repositories/newsRepository.server";
-import type { News } from "~/@types/news";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import NewsSingle from "~/components/NewsSingle/NewsSingle";
+import type { News } from "~/@types/news";
 
 export const loader: LoaderFunction = async ({ params, request }: LoaderFunctionArgs) => {
   let newsData = null;
@@ -15,6 +15,22 @@ export const loader: LoaderFunction = async ({ params, request }: LoaderFunction
   }
 
   return json({ newsData });
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) {
+    return { title: "News not found" };
+  }
+
+  return [{
+    title: data?.title,
+    description: data?.content?.substring(0, 150),
+    "og:title": data?.title,
+    "og:description": data?.content?.substring(0, 150),
+    "og:image": data.media?.[0]?.url || "/default-thumbnail.jpg",
+    /** Add link to <head> */
+    link: { rel: "canonical", href: `http://localhost:5173/app/publication/${data.id}` },
+  }];
 };
 
 export default function Publication() {
