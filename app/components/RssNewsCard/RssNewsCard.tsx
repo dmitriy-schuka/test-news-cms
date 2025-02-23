@@ -1,8 +1,14 @@
 import React from 'react';
+import type { FC } from "react";
+import type { RssNews } from "~/@types/rssNews";
 import { Link, Box, BlockStack, Card, InlineStack, Text } from "@shopify/polaris";
 import styles from "./RssNewsCard.module.css";
 
-const RssNewsCard = ({ rssNews }) => {
+interface IRssNewsCardProps {
+  rssNews: RssNews;
+}
+
+const RssNewsCard: FC<IRssNewsCardProps> = ({ rssNews }) => {
   return (
     <Box paddingInlineEnd={200}>
       <Box paddingBlockEnd={100}>
@@ -25,6 +31,7 @@ const RssNewsCard = ({ rssNews }) => {
                     src={rssNews.mediaUrl}
                     alt="Rss news media"
                     style={{maxHeight: "inherit"}}
+                    loading="lazy"
                   />
                 </InlineStack>
             }
