@@ -51,6 +51,7 @@ const MediaInput = ({ newsData, handleChange }) => {
                       src={file?.url ? file.url : window.URL.createObjectURL(file)}
                       alt={"Media image"}
                       style={{maxWidth: "373px", maxHeight: "118px"}}
+                      loading="lazy"
                     />
                   :
                   VALID_VIDEO_TYPES.includes(file.type)
@@ -66,6 +67,7 @@ const MediaInput = ({ newsData, handleChange }) => {
                           src={NoteIcon}
                           alt={"Media image"}
                           style={{maxWidth: "373px", maxHeight: "118px"}}
+                          loading="lazy"
                         />
               }
 

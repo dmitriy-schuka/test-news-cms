@@ -19,6 +19,7 @@ const Header = ({ user }: { user: { email: string, name: string } | null }) => {
               src={NewsLogo}
               alt="NewsLogo"
               className={styles.Header__icon}
+              loading="lazy"
             />
           </Link>
         </Box>
