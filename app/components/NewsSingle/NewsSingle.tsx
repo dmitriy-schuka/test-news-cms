@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import type {FC} from "react";
 import {
   Card,
   BlockStack,
@@ -9,8 +10,13 @@ import {
 import { checkIsArray, formatTimeAgo } from "~/utils/common";
 import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from "~/constants/common";
 import styles from './NewsSingle.module.css';
+import { News } from "~/@types/news";
 
-const NewsSingle = ({ newsData }) => {
+interface INewsSingleProps {
+  newsData: News
+}
+
+const NewsSingle: FC<INewsSingleProps> = ({ newsData }) => {
   const renderNewsMedia = useMemo(() => {
     return (
       newsData?.media?.map((mediaItem, index) => {
@@ -25,6 +31,7 @@ const NewsSingle = ({ newsData }) => {
                   src={mediaUrl}
                   alt="News media"
                   style={{/*maxWidth: "fit-content",*/ maxHeight: "inherit"}}
+                  loading="lazy"
                 />
               </div>
             )
