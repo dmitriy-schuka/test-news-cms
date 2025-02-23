@@ -1,4 +1,4 @@
-import type { Prisma, RssNews as PrismaRssNews } from "@prisma/client";
+import type { Prisma, RssNews as PrismaRssNews } from '@prisma/client';
 
 export type RssNews = PrismaRssNews;
 export type RssNewsCreate = Prisma.RssNewsCreateInput;

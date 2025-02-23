@@ -1,60 +1,73 @@
-import { useEffect, useState } from "react";
-import { json } from "@remix-run/node";
-import { Page } from "@shopify/polaris";
-import type { MetaFunction, LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { getNewsById } from "~/repositories/newsRepository.server";
-import { useLoaderData, useNavigate } from "@remix-run/react";
-import NewsSingle from "~/components/NewsSingle/NewsSingle";
-import type { News } from "~/@types/news";
+import { json } from '@remix-run/node';
+import type {
+    MetaFunction,
+    LoaderFunction,
+    LoaderFunctionArgs,
+} from '@remix-run/node';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import { Page } from '@shopify/polaris';
+import { useEffect, useState } from 'react';
 
-export const loader: LoaderFunction = async ({ params, request }: LoaderFunctionArgs) => {
-  let newsData = null;
+import type { News } from '~/@types/news';
+import NewsSingle from '~/components/NewsSingle/NewsSingle';
+import { getNewsById } from '~/repositories/newsRepository.server';
 
-  if (params?.id) {
-     newsData = await getNewsById(Number(params.id));
-  }
+export const loader: LoaderFunction = async ({
+    params,
+    request,
+}: LoaderFunctionArgs) => {
+    let newsData = null;
 
-  return json({ newsData });
+    if (params?.id) {
+        newsData = await getNewsById(Number(params.id));
+    }
+
+    return json({ newsData });
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  if (!data) {
-    return { title: "News not found" };
-  }
+    if (!data) {
+        return { title: 'News not found' };
+    }
 
-  return [{
-    title: data?.title,
-    description: data?.content?.substring(0, 150),
-    "og:title": data?.title,
-    "og:description": data?.content?.substring(0, 150),
-    "og:image": data.media?.[0]?.url || "/default-thumbnail.jpg",
-    /** Add link to <head> */
-    link: { rel: "canonical", href: `http://localhost:5173/app/publication/${data.id}` },
-  }];
+    return [
+        {
+            title: data?.title,
+            description: data?.content?.substring(0, 150),
+            'og:title': data?.title,
+            'og:description': data?.content?.substring(0, 150),
+            'og:image': data.media?.[0]?.url || '/default-thumbnail.jpg',
+            /** Add link to <head> */
+            link: {
+                rel: 'canonical',
+                href: `http://localhost:5173/app/publication/${data.id}`,
+            },
+        },
+    ];
 };
 
 export default function Publication() {
-  const [newsData, setNewsData] = useState<News>({});
-  const loaderData = useLoaderData<typeof loader>();
-  const navigate = useNavigate();
+    const [newsData, setNewsData] = useState<News>({});
+    const loaderData = useLoaderData<typeof loader>();
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    if (loaderData?.newsData?.id) {
-      setNewsData(loaderData.newsData);
-    }
-  }, [loaderData, setNewsData]);
-
-  return (
-    <Page
-      title={newsData?.title}
-      backAction={{
-        content: 'Go back',
-        onAction() {
-          navigate(-1)
+    useEffect(() => {
+        if (loaderData?.newsData?.id) {
+            setNewsData(loaderData.newsData);
         }
-      }}
-    >
-      <NewsSingle newsData={newsData}/>
-    </Page>
-  )
-};
+    }, [loaderData, setNewsData]);
+
+    return (
+        <Page
+            title={newsData?.title}
+            backAction={{
+                content: 'Go back',
+                onAction() {
+                    navigate(-1);
+                },
+            }}
+        >
+            <NewsSingle newsData={newsData} />
+        </Page>
+    );
+}

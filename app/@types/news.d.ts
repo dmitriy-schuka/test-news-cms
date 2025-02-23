@@ -1,13 +1,13 @@
-import type { Prisma, News as PrismaNews } from "@prisma/client";
+import type { Prisma, News as PrismaNews } from '@prisma/client';
 
 export type PaginatedNews = {
-  news: PrismaNews[];
-  count: number;
-  page: number;
-  sortColumn: string;
-  sortDirection: Prisma.SortOrder;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
+    news: PrismaNews[];
+    count: number;
+    page: number;
+    sortColumn: string;
+    sortDirection: Prisma.SortOrder;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
 };
 
 export type News = PrismaNews;
