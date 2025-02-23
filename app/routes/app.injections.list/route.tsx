@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { json, redirect } from "@remix-run/node";
-// import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import type { ActionFunction, LoaderFunction, ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { Page, InlineStack } from "@shopify/polaris";
@@ -12,11 +11,13 @@ export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) =>
 
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") ?? "1");
+  const sortOrder = url.searchParams.get("sort") as "asc" | "desc" ?? "asc";
+  const sortColumn = url.searchParams.get("column") ?? "id";
 
   const fetchedInjections = await getAllInjections({
     page,
-    sortOrder: url.searchParams.get("sort") as "asc" | "desc",
-    sortColumn: url.searchParams.get("column") ?? "id",
+    sortOrder,
+    sortColumn,
   });
 
   return json({ injectionsData: fetchedInjections });

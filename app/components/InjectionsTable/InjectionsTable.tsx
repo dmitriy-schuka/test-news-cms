@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type {FC} from "react";
 import {
   Card,
   IndexTable,
@@ -8,11 +9,22 @@ import {
 } from "@shopify/polaris";
 import { useSearchParams } from "@remix-run/react";
 import EmptyStateMarkup from "~/components/common/EmptyStateMarkup/EmptyStateMarkup";
-import styles from "./InjectionsTable.module.css";
 import { checkIsArray } from "~/utils/common";
+import type { Injection } from "~/@types/injection";
+import styles from "./InjectionsTable.module.css";
 
-const InjectionsTable = ({ injections, page, sortDirection, sortColumn, hasNextPage, hasPreviousPage, handleInjectionEdit }) => {
-  const [injectionItems, setInjectionItems] = useState([]);
+interface InjectionsTableProps {
+  injections: Injection[];
+  page: number;
+  sortDirection: "asc" | "desc";
+  sortColumn: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  handleInjectionEdit: (id: number) => void;
+}
+
+const InjectionsTable: FC<InjectionsTableProps> = ({ injections, page, sortDirection, sortColumn, hasNextPage, hasPreviousPage, handleInjectionEdit }) => {
+  const [injectionItems, setInjectionItems] = useState<Injection[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const resourceName = {
@@ -72,7 +84,6 @@ const InjectionsTable = ({ injections, page, sortDirection, sortColumn, hasNextP
 
               <IndexTable.Cell>
                 <Box maxWidth={"200px"} width={"100%"}>
-                  {/*<p className={"truncate"}>*/}
                   <p className={styles.Text__truncate}>
                     {imageUrl}
                   </p>
@@ -81,7 +92,6 @@ const InjectionsTable = ({ injections, page, sortDirection, sortColumn, hasNextP
 
               <IndexTable.Cell>
                 <Box maxWidth={"200px"} width={"100%"}>
-                  {/*<p className={"truncate"}>*/}
                   <p className={styles.Text__truncate}>
                     {linkUrl}
                   </p>
@@ -90,7 +100,6 @@ const InjectionsTable = ({ injections, page, sortDirection, sortColumn, hasNextP
 
               <IndexTable.Cell>
                 <Box maxWidth={"200px"} width={"100%"}>
-                  {/*<p className={"truncate"}>*/}
                   <p className={styles.Text__truncate}>
                     {text}
                   </p>
@@ -111,7 +120,6 @@ const InjectionsTable = ({ injections, page, sortDirection, sortColumn, hasNextP
 
               <IndexTable.Cell>
                 <Box maxWidth={"200px"} width={"100%"}>
-                  {/*<p className={"truncate"}>*/}
                   <p className={styles.Text__truncate}>
                     {regex}
                   </p>
