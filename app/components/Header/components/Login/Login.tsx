@@ -1,10 +1,16 @@
 import React, { useCallback } from 'react';
-import { Card, Box, Button, BlockStack, FormLayout, Text, InlineStack, /*Form, Link*/ } from "@shopify/polaris";
-import { Form, Link, useNavigate } from "@remix-run/react";
+import type {FC} from "react";
+import { Card, Box, Button, BlockStack, FormLayout, Text, InlineStack, } from "@shopify/polaris";
+import { Form, } from "@remix-run/react";
 import FormInput from "~/components/common/FormInput/FormInput";
 
-const Login = ({closeModal, setModalType}) => {
-  const handleModal = useCallback((modalType) => {
+interface ILoginProps {
+  closeModal: () => void;
+  setModalType: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Login: FC<ILoginProps> = ({closeModal, setModalType}) => {
+  const handleModal = useCallback((modalType: string) => {
     setModalType(modalType);
   }, [setModalType]);
 

@@ -1,6 +1,16 @@
 import React from 'react';
+import type {FC} from "react";
 
-const FormInput = ({type, name, required, label, placeholder, onChange}) => {
+interface INewsFormProps {
+  type: string;
+  name: string;
+  required: boolean;
+  label: string;
+  placeholder: string;
+  onChange: () => void;
+}
+
+const FormInput: FC<INewsFormProps> = ({type, name, required, label, placeholder, onChange}) => {
   return (
     <div>
       <label htmlFor="name" className="block mb-1 text-sm font-medium capitalize">

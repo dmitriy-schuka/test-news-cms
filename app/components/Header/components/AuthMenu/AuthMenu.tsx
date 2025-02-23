@@ -1,15 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type {FC} from "react";
 import Modal from 'react-modal';
 import { Button, Avatar } from "@shopify/polaris";
-
 import Login from '../Login/Login';
 import Logout from '../Logout/Logout';
 import Signup from '../Signup/Signup';
 import { getInitials } from "~/utils/common";
+import type { User } from '~/@types/user'
 
-const AuthMenu = ({ user }) => {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [modalType, setModalType] = useState("");
+interface IAuthMenuProps {
+  user: User
+}
+
+const AuthMenu: FC<IAuthMenuProps> = ({ user }) => {
+  const [modalIsOpen, setIsOpen] = useState<boolean>(false);
+  const [modalType, setModalType] = useState<string>("");
 
   useEffect(() => {
     user
