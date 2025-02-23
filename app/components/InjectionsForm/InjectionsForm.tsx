@@ -1,4 +1,5 @@
 import React from 'react';
+import type {FC} from "react";
 import {
   Button,
   Card,
@@ -11,8 +12,21 @@ import {
   TextField
 } from "@shopify/polaris";
 import { INJECTION_DISPLAY_ON_TYPES, INJECTION_TYPES } from "~/constants/common";
+import type { Injection } from "~/@types/injection";
+import type { Settings } from "~/@types/settings";
 
-const InjectionsForm = (props) => {
+interface InjectionsFormProps {
+  injectionData: Injection;
+  settingsData: Settings;
+  news: { label: string; value: number }[];
+  handleChange: (value: string | number | boolean, fieldName: string) => void;
+  handleSettingsChange: (value: string | number | boolean, fieldName: string) => void;
+  handleCreateInjection: () => void;
+  handleEditInjection: () => void;
+  handleDeleteInjection: () => void;
+}
+
+const InjectionsForm: FC<InjectionsFormProps> = (props) => {
   const { injectionData, settingsData, news, handleChange, handleSettingsChange, handleCreateInjection, handleEditInjection, handleDeleteInjection } = props;
 
   return (

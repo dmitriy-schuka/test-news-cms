@@ -87,7 +87,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
       }
     }
   } catch (err) {
-    return json({ error: "Internal Server Error" }, { status: 500 });
+    return json({ error: "Internal Server Error", message: err }, { status: 500 });
   }
 };
 

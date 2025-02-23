@@ -14,17 +14,21 @@ import {
   updateInjection
 } from "~/repositories/injectionRepository.server";
 import { createUpdateSettings, getSettings } from "~/repositories/settingsRepository.server";
+import type { Injection } from "~/@types/injection";
+import type { Settings } from "~/@types/settings";
 
 export const loader: LoaderFunction = async ({ params, request }: LoaderFunctionArgs) => {
   // await checkUserAuth(request);
 
-  const fetchedNews = await getNews();
-  const fetchedSettings = await getSettings();
+  const [fetchedNews, fetchedSettings] = await Promise.all([
+    getNews(),
+    getSettings(),
+  ]);
 
   if (params?.id !== 'new') {
     const injectionData = await getInjectionById(Number(params.id));
 
-    return json({ injectionData: injectionData, settingsData: fetchedSettings, newsData: fetchedNews, });
+    return json({ injectionData, settingsData: fetchedSettings, newsData: fetchedNews, });
   } else {
     return json({ injectionData: null, settingsData: fetchedSettings, newsData: fetchedNews, });
   }
@@ -36,16 +40,16 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
     const formData = await request.formData();
 
-    const injectionId = formData.get("id");
-    const injectionType = formData.get("injectionType");
-    const imageUrl = formData.get("imageUrl") || null;
-    const linkUrl = formData.get("linkUrl") || null;
-    const text = formData.get("text");
+    const injectionId = formData.get("id") as string;
+    const injectionType = formData.get("injectionType") as string;
+    const imageUrl = formData.get("imageUrl") as string || null;
+    const linkUrl = formData.get("linkUrl") as string || null;
+    const text = formData.get("text") as string;
     const newsId = formData.get("newsId") ? Number(formData.get("newsId")) : null;
     const isDraft = formData.get("isDraft") === "true";
     const priority = formData.get("priority") ? Number(formData.get("priority")) : 0;
-    const displayOn = formData.get("displayOn");
-    const regex = formData.get("regex") || null;
+    const displayOn = formData.get("displayOn") as string;
+    const regex = formData.get("regex") as string || null;
 
     const settingsId = formData.get("settingsId") ? Number(formData.get("settingsId")) : 0;
     const listInjections = formData.get("listInjections") ? Number(formData.get("listInjections")) : null;
@@ -78,7 +82,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         if (injection?.id) {
           break;
         } else {
-          return json({ error: "Error creating injection data" });
+          return json({ error: "Error creating injection data" }, { status: 400 });
         }
       }
       case "PUT": {
@@ -108,7 +112,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         if (injection?.id) {
           break;
         } else {
-          return json({ error: "Error updating news data" });
+          return json({ error: "Error updating news data" }, { status: 400 });
         }
       }
       case "DELETE": {
@@ -119,20 +123,17 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         if (injection?.id) {
           break;
         } else {
-          return json({ error: "Error deleting news" });
+          return json({ error: "Error deleting news" }, { status: 400 });
         }
       }
       default: {
-        return null;
+        return json({ error: "Method not allowed" }, { status: 405 });
       }
     }
 
     return redirect("/app/injections/list");
   } catch (err) {
-    console.log('Error in news actions:')
-    console.log(err)
-
-    return null;
+    return json({ error: "Internal Server Error", message: err }, { status: 500 });
   }
 };
 
@@ -188,41 +189,28 @@ export default function Injection() {
     [setSettingsData],
   );
 
-  const handleCreateInjection = useCallback(() => {
+  const handleInjection = useCallback((method: "POST" | "PUT", formData: FormData) => {
+    submit(formData, { method, encType: "multipart/form-data" });
+  }, [submit]);
+
+  const prepareFormData = (injectionData: Injection, settingsData: Settings): FormData => {
     const formData = new FormData();
 
-    Object.keys(injectionData).forEach((key) => {
-      formData.append(key, injectionData[key]);
-    });
+    Object.keys(injectionData).forEach(key => formData.append(key, injectionData[key] as string));
+    Object.keys(settingsData).forEach(key => formData.append(key, settingsData[key] as string));
 
-    Object.keys(settingsData).forEach((key) => {
-      if (key === 'id') {
-        formData.append('settingsId', settingsData[key]);
-      } else {
-        formData.append(key, settingsData[key]);
-      }
-    });
+    return formData;
+  };
 
-    submit(formData, { method: "POST", encType: "multipart/form-data" });
-  }, [injectionData, settingsData, submit]);
+  const handleCreateInjection = useCallback(() => {
+    const formData = prepareFormData(injectionData, settingsData);
+    handleInjection("POST", formData);
+  }, [injectionData, settingsData, handleInjection]);
 
   const handleEditInjection = useCallback(() => {
-    const formData = new FormData();
-
-    Object.keys(injectionData).forEach((key) => {
-      formData.append(key, injectionData[key]);
-    });
-
-    Object.keys(settingsData).forEach((key) => {
-      if (key === 'id') {
-        formData.append('settingsId', settingsData[key]);
-      } else {
-        formData.append(key, settingsData[key]);
-      }
-    });
-
-    submit(formData, { method: "PUT", encType: "multipart/form-data" });
-  }, [injectionData, settingsData, submit]);
+    const formData = prepareFormData(injectionData, settingsData);
+    handleInjection("PUT", formData);
+  }, [injectionData, settingsData, handleInjection]);
 
   const handleDeleteInjection = useCallback(() => {
     const formData = new FormData();
@@ -232,14 +220,12 @@ export default function Injection() {
     submit(formData, { method: "DELETE", encType: "multipart/form-data" });
   }, [injectionData, submit]);
 
-  console.log('injectionData in Injection:')
-  console.log(injectionData)
-
   const newsIds = checkIsArray(loaderData?.newsData?.news)
-    && loaderData.newsData.news.map((news) => ({
-      label: news?.title,
-      value: news.id
-    }));
+    ? loaderData.newsData.news.map((news) => ({
+        label: news?.title,
+        value: news.id
+      }))
+    : [];
 
   return (
     <Page

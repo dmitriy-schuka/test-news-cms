@@ -16,10 +16,6 @@ const UserMenu = () => {
 
   const itemsActions = [
     {
-      content: 'Users',
-      onAction: () => navigate('/app/users'),
-    },
-    {
       content: 'News',
       onAction: () => navigate('/app/news/list'),
     },
