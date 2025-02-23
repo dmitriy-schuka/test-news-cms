@@ -189,11 +189,11 @@ export default function Injection() {
     [setSettingsData],
   );
 
-  const handleInjection = useCallback((method: "POST" | "PUT", formData: FormData) => {
+  const handleSubmit = useCallback((method: "POST" | "PUT", formData) => {
     submit(formData, { method, encType: "multipart/form-data" });
   }, [submit]);
 
-  const prepareFormData = (injectionData: Injection, settingsData: Settings): FormData => {
+  const prepareFormData = (injectionData: Injection, settingsData: Settings) => {
     const formData = new FormData();
 
     Object.keys(injectionData).forEach(key => formData.append(key, injectionData[key] as string));
@@ -204,13 +204,13 @@ export default function Injection() {
 
   const handleCreateInjection = useCallback(() => {
     const formData = prepareFormData(injectionData, settingsData);
-    handleInjection("POST", formData);
-  }, [injectionData, settingsData, handleInjection]);
+    handleSubmit("POST", formData);
+  }, [injectionData, settingsData, handleSubmit]);
 
   const handleEditInjection = useCallback(() => {
     const formData = prepareFormData(injectionData, settingsData);
-    handleInjection("PUT", formData);
-  }, [injectionData, settingsData, handleInjection]);
+    handleSubmit("PUT", formData);
+  }, [injectionData, settingsData, handleSubmit]);
 
   const handleDeleteInjection = useCallback(() => {
     const formData = new FormData();

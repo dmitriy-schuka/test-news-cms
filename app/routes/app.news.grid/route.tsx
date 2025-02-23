@@ -1,79 +1,52 @@
 import { json } from "@remix-run/node";
-import type { MetaFunction, LoaderFunction } from "@remix-run/node";
-import { useLoaderData, useSearchParams, useSubmit } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { Page, BlockStack } from "@shopify/polaris";
-import NewsGrid from "~/components/NewsGrid/NewsGrid";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { mainPageNewsLoader } from "~/loaders/newsLoader";
-
 import NewsMenu from "~/components/NewsMenu/NewsMenu";
-import styles from "./styles.module.css";
+import NewsGrid from "~/components/NewsGrid/NewsGrid";
+import { useCallback } from "react";
+import { mainPageNewsLoader } from "~/loaders/newsLoader";
 import { getAllRssNews } from "~/repositories/rssNewsRepository.server";
 import RssNewsCard from "~/components/RssNewsCard/RssNewsCard";
+import styles from "./styles.module.css";
 
 export const loader = async ({ request }: { request: Request }) => {
-  const fetchedNews = await mainPageNewsLoader(request);
-  const fetchedRssNews = await getAllRssNews();
+  const [fetchedNews, fetchedRssNews] = await Promise.all([
+    mainPageNewsLoader(request),
+    getAllRssNews(),
+  ]);
 
   return json({ fetchedNews, fetchedRssNews });
 };
 
 export default function NewsMainPage() {
-  const [newsData, setNewsData] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const { fetchedNews, fetchedRssNews } = useLoaderData<typeof loader>();
-  const submit = useSubmit();
 
-  useEffect(() => {
-    fetchedNews && setNewsData(fetchedNews);
-  }, [setNewsData, fetchedNews]);
+  const updateSearchParams = useCallback((params: Record<string, string | undefined>) => {
+    setSearchParams(prev => ({ ...Object.fromEntries(prev), ...params }));
+  }, [setSearchParams]);
 
-  // const handleSort = useCallback(
-  //   (_: number, direction: "ascending" | "descending") => {
-  //     const sort = direction === "ascending" ? "asc" : "desc";
-  //     setSearchParams({ sort, column: "id", page: "1" });
-  //   },
-  //   [setSearchParams],
-  // );
+  const handleSort = (column?: string, direction?: "asc" | "desc") =>
+    updateSearchParams({ sort: direction || "desc", column: column || "id", page: "1" });
 
-  const handleSort = useCallback(
-    (column: string | undefined, direction: "asc" | "desc" | undefined) => {
-      setSearchParams({ sort: direction || "desc", column: column || "id", page: "1" });
-    },
-    [setSearchParams],
-  );
+  const handleSearch = (column?: string, value?: string) =>
+    updateSearchParams({ searchColumn: column, searchValue: value });
 
-  const handleSearch = useCallback(
-    (column: string | undefined, value: string | undefined) => {
-      setSearchParams({ searchColumn: column, searchValue: value });
-    },
-    [setSearchParams],
-  );
+  const handleFilterByTags = (tags?: string) =>
+    updateSearchParams({ newsTags: tags });
 
-  const handleFilterByTags = useCallback(
-    (tags: string | undefined) => {
-      setSearchParams({ newsTags: tags });
-    },
-    [setSearchParams],
-  );
-
-  const handleNextPage = useCallback(() => {
-    setSearchParams({
-      sort: newsData?.sortDirection,
-      column: newsData?.sortColumn,
-      page: String(newsData?.page + 1),
+  const changePage = useCallback((offset: number) => {
+    updateSearchParams({
+      sort: fetchedNews?.sortDirection,
+      column: fetchedNews?.sortColumn,
+      page: String((fetchedNews?.page || 1) + offset),
     });
-  }, [newsData, setSearchParams]);
+  }, [fetchedNews, updateSearchParams]);
 
-  const handlePrevPage = useCallback(() => {
-    setSearchParams({
-      sort: newsData?.sortDirection,
-      column: newsData?.sortColumn,
-      page: String(newsData?.page - 1),
-    });
-  }, [newsData, setSearchParams]);
+  const handleNextPage = () => changePage(1);
+  const handlePrevPage = () => changePage(-1);
 
-  const renderRssNews = useMemo(() => {
+  const renderRssNews = () => {
     return (
       fetchedRssNews.map((rssNews, index) => {
         return (
@@ -81,7 +54,7 @@ export default function NewsMainPage() {
         )
       })
     )
-  }, [fetchedRssNews])
+  };
 
   return (
     <Page
@@ -92,25 +65,27 @@ export default function NewsMainPage() {
       <div className={styles.NewsContent__container}>
         <BlockStack gap={400}>
           <NewsMenu
+            role="navigation"
+            aria-label="News filters and navigation"
             handleSearch={handleSearch}
           />
 
           {
-            fetchedRssNews && fetchedRssNews?.length > 0 &&
-              renderRssNews
+            (fetchedRssNews && fetchedRssNews?.length > 0) &&
+              renderRssNews()
           }
         </BlockStack>
 
         <NewsGrid
-          news={newsData?.news}
-          latestNews={newsData?.latestNews}
+          news={fetchedNews?.news}
+          latestNews={fetchedNews?.latestNews}
           onSort={handleSort}
-          page={newsData?.page}
+          page={fetchedNews?.page}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
-          hasNextPage={newsData?.hasNextPage}
-          hasPrevPage={newsData?.hasPreviousPage}
-          totalNews={newsData?.totalNews}
+          hasNextPage={fetchedNews?.hasNextPage}
+          hasPrevPage={fetchedNews?.hasPreviousPage}
+          totalNews={fetchedNews?.totalNews}
           handleFilterByTags={handleFilterByTags}
         />
       </div>

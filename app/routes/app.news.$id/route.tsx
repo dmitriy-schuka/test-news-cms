@@ -5,12 +5,12 @@ import type { ActionFunction, LoaderFunction, ActionFunctionArgs, LoaderFunction
 import { useActionData, useLoaderData, useNavigate, useSubmit } from "@remix-run/react";
 import { Page } from "@shopify/polaris";
 import { checkUserAuth } from "~/utils/checkUserAuth.server";
-import type { News } from "~/@types/news";
-import NewsForm from "~/components/NewsForm/NewsForm";
-import { getTags } from "~/repositories/tagRepository.server";
-import { createNews, deleteNews, getNewsById, updateNews } from "~/repositories/newsRepository.server";
-import { uploadFile } from "~/services/minio.server";
 import { checkIsArray, getFileNameFromUrl } from "~/utils/common";
+import { getTags } from "~/repositories/tagRepository.server";
+import { uploadFile } from "~/services/minio.server";
+import { createNews, deleteNews, getNewsById, updateNews } from "~/repositories/newsRepository.server";
+import NewsForm from "~/components/NewsForm/NewsForm";
+import type { News } from "~/@types/news";
 
 export const loader: LoaderFunction = async ({ params, request }: LoaderFunctionArgs) => {
   // await checkUserAuth(request);
@@ -77,7 +77,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         if (news?.id) {
           return redirect("/app/news/list");
         } else {
-          return json({ error: "Error creating news data" });
+          return json({ error: "Error creating news data" }, { status: 400 });
         }
       }
       case "PUT": {
@@ -101,7 +101,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         if (news?.id) {
           return redirect("/app/news/list");
         } else {
-          return json({ error: "Error updating news data" });
+          return json({ error: "Error updating news data" }, { status: 400 });
         }
       }
       case "DELETE": {
@@ -122,18 +122,15 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         if (news?.id) {
           return redirect("/app/news/list");
         } else {
-          return json({ error: "Error deleting news" });
+          return json({ error: "Error deleting news" }, { status: 400 });
         }
       }
       default: {
-        return null;
+        return json({ error: "Method not allowed" }, { status: 405 });
       }
     }
   } catch (err) {
-    console.log('Error in news actions:')
-    console.log(err)
-
-    return null;
+    return json({ error: "Internal Server Error", message: err }, { status: 500 });
   }
 };
 
@@ -144,9 +141,6 @@ export default function News() {
   const actionData = useActionData<typeof action>();
   const navigate = useNavigate();
   const submit = useSubmit();
-
-  console.log('newsData in app.news.%id:')
-  console.log(newsData)
 
   useEffect(() => {
     if (actionData?.error) {
@@ -174,7 +168,11 @@ export default function News() {
     [setNewsData],
   );
 
-  const handleCreateNews = useCallback(() => {
+  const handleSubmit = useCallback((method: "POST" | "PUT", formData) => {
+    submit(formData, { method, encType: "multipart/form-data" });
+  }, [submit]);
+
+  const prepareFormData = (newsData: News) => {
     const formData = new FormData();
 
     if (newsData.files) {
@@ -183,46 +181,28 @@ export default function News() {
       });
     }
 
-    // Object.keys(newsData).forEach((key) => {
-    //   if (key !== "files") {
-    //     formData.append(key, newsData[key]);
-    //   }
-    // });
-
     Object.keys(newsData).forEach((key) => {
       if (key !== "files") {
         if (checkIsArray(newsData[key])) {
           formData.append(key, JSON.stringify(newsData[key]));
         } else {
-          formData.append(key, newsData[key]);
+          formData.append(key, newsData[key] as string);
         }
       }
     });
 
-    submit(formData, { method: "POST", encType: "multipart/form-data" });
-  }, [newsData, submit]);
+    return formData;
+  };
+
+  const handleCreateNews = useCallback(() => {
+    const formData = prepareFormData(newsData);
+    handleSubmit("POST", formData);
+  }, [newsData, handleSubmit, prepareFormData]);
 
   const handleEditNews = useCallback(() => {
-    const formData = new FormData();
-
-    if (newsData.files) {
-      newsData.files.forEach((file: File) => {
-        formData.append(`files`, file, file.name);
-      });
-    }
-
-    Object.keys(newsData).forEach((key) => {
-      if (key !== "files") {
-        if (checkIsArray(newsData[key])) {
-          formData.append(key, JSON.stringify(newsData[key]));
-        } else {
-          formData.append(key, newsData[key]);
-        }
-      }
-    });
-
-    submit(formData, { method: "PUT", encType: "multipart/form-data" });
-  }, [newsData, submit]);
+    const formData = prepareFormData(newsData);
+    handleSubmit("PUT", formData);
+  }, [newsData, handleSubmit, prepareFormData]);
 
   const handleDeleteNews = useCallback(() => {
     const formData = new FormData();
