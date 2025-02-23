@@ -1,8 +1,8 @@
 import React from 'react';
+import type {FC} from "react";
 import {
   Box,
   Button,
-  ButtonGroup,
   Card,
   Form,
   FormLayout,
@@ -11,16 +11,28 @@ import {
   Text,
   TextField
 } from "@shopify/polaris";
+import type { User } from "~/@types/user";
 
-const AccountForm = (props) => {
+interface IAccountForm {
+  accountData: User,
+  handleChange: (field: string, value: string) => void;
+  handleEditAccount: () => void;
+  newPassword: string;
+  currentPassword: string;
+  handlePasswordChange: (field: string, value: string) => void;
+  isPassVerify: boolean;
+  handleEditPassword: () => void;
+  handleDeleteAccount: () => void;
+}
+
+const AccountForm: FC<IAccountForm> = (props) => {
   const {
     accountData,
     handleChange,
     handleEditAccount,
     newPassword,
-    setNewPassword,
     currentPassword,
-    handleCurrentPass,
+    handlePasswordChange,
     isPassVerify,
     handleEditPassword,
     handleDeleteAccount,
@@ -45,7 +57,7 @@ const AccountForm = (props) => {
                     type={"text"}
                     placeholder={"First name"}
                     value={accountData?.firstName}
-                    onChange={(value) => handleChange(value, "firstName")}
+                    onChange={(value) => handleChange("firstName", value)}
                     autoComplete={"off"}
                   />
 
@@ -54,7 +66,7 @@ const AccountForm = (props) => {
                     type={"text"}
                     placeholder={"Last name"}
                     value={accountData?.lastName}
-                    onChange={(value) => handleChange(value, "lastName")}
+                    onChange={(value) => handleChange("lastName", value)}
                     autoComplete={"off"}
                   />
 
@@ -63,7 +75,7 @@ const AccountForm = (props) => {
                     type={"email"}
                     placeholder={"Your email"}
                     value={accountData?.email}
-                    onChange={(value) => handleChange(value, "email")}
+                    onChange={(value) => handleChange("email", value)}
                     autoComplete={"off"}
                   />
 
@@ -91,7 +103,7 @@ const AccountForm = (props) => {
                     type={"password"}
                     placeholder={"Your password"}
                     value={currentPassword}
-                    onChange={(value) => handleCurrentPass(value)}
+                    onChange={(value) => handlePasswordChange('currentPassword', value)}
                     autoComplete={"off"}
                     helpText={
                       !isPassVerify &&
@@ -106,7 +118,7 @@ const AccountForm = (props) => {
                     type={"password"}
                     placeholder={"Your new password"}
                     value={newPassword}
-                    onChange={(value) => setNewPassword(value)}
+                    onChange={(value) => handlePasswordChange('newPassword', value)}
                     autoComplete={"off"}
                   />
 
