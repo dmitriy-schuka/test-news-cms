@@ -1,8 +1,5 @@
 import { json } from '@remix-run/node';
-import type {
-    LoaderFunction,
-    LoaderFunctionArgs,
-} from '@remix-run/node';
+import type { LoaderFunction, LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import { Page, InlineStack } from '@shopify/polaris';
 import { useCallback } from 'react';

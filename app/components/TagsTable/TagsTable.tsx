@@ -7,12 +7,12 @@ import {
     EmptySearchResult,
 } from '@shopify/polaris';
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
-
 import type { FC } from 'react';
-import type { Tag } from "~/@types/tag";
+
+import type { Tag } from '~/@types/tag';
 
 interface ITagsTableProps {
-    tags: Tag[],
+    tags: Tag[];
     page: number;
     sortDirection: string;
     sortColumn: string;

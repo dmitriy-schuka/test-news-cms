@@ -220,8 +220,10 @@ export const getNewsById = async (id: string): Promise<News | null> => {
             },
         });
 
-        newsData.tagsData = newsData?.tags;
-        newsData.tags = newsData?.tags?.map(({ id }) => id);
+        if (newsData) {
+            newsData.tagsData = newsData?.tags;
+            newsData.tags = newsData?.tags?.map(({ id }) => id);
+        }
 
         return newsData;
     } catch (err) {

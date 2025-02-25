@@ -1,8 +1,8 @@
 import { useSearchParams } from '@remix-run/react';
 import { Box, Card, Text, IndexTable, Badge } from '@shopify/polaris';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
 import type { FC } from 'react';
+
 import type { RssNews } from '~/@types/rssNews';
 import EmptyStateMarkup from '~/components/common/EmptyStateMarkup/EmptyStateMarkup';
 import { checkIsArray } from '~/utils/common';
@@ -10,7 +10,7 @@ import { checkIsArray } from '~/utils/common';
 import styles from './RssSourceTable.module.css';
 
 interface IRssSourceTableProps {
-    rssData: RssNews,
+    rssData: RssNews;
     page: number;
     sortDirection: string;
     sortColumn: string;

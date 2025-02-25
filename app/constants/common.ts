@@ -15,11 +15,7 @@ export const NEWS_MENU_ITEMS = [
     },
     {
         title: 'Search page',
-        redirectUrl: '/app/news/grid',
-    },
-    {
-        title: 'Search by tags page',
-        redirectUrl: '/app/news/grid',
+        redirectUrl: '/app/news/search',
     },
 ];
 

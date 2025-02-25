@@ -18,6 +18,7 @@ const prepareNewsQuery = (request) => {
             searchColumn: url.searchParams.get('searchColumn'),
             searchValue: url.searchParams.get('searchValue'),
             regexFilter: url.searchParams.get('regexFilter'),
+            searchedPage: url.searchParams.get('searchedPage'),
         },
     ];
 };

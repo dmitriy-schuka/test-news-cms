@@ -8,8 +8,8 @@ import {
 } from '@shopify/polaris';
 import { NoteIcon } from '@shopify/polaris-icons';
 import React, { useState, useCallback, useEffect } from 'react';
-
 import type { FC } from 'react';
+
 import type { News } from '~/@types/news';
 import { VALID_IMAGE_TYPES, VALID_VIDEO_TYPES } from '~/constants/common';
 import { checkIsArray } from '~/utils/common';

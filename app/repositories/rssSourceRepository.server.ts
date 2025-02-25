@@ -1,8 +1,8 @@
 import type { Prisma } from '@prisma/client';
-import type { RssNews } from '~/@types/rssNews';
 import { differenceInMinutes } from 'date-fns';
 import xml2js from 'xml2js';
 
+import type { RssNews } from '~/@types/rssNews';
 import type {
     RssSource,
     RssSourceCreate,
@@ -89,7 +89,10 @@ export const parseRssXml = async (xml: string) => {
     return { items: Array.isArray(items) ? items : [items] };
 };
 
-export const mapFields = (item: RssNews, fieldMapping: Record<string, string>) => {
+export const mapFields = (
+    item: RssNews,
+    fieldMapping: Record<string, string>
+) => {
     const mappedData: Record<string, any> = {};
     for (const [newsField, rssField] of Object.entries(fieldMapping)) {
         mappedData[newsField] = item[rssField] || '';

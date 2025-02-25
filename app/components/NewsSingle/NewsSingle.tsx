@@ -51,14 +51,11 @@ const NewsSingle: FC<INewsSingleProps> = ({ newsData }) => {
         });
     }, [newsData?.media]);
 
-    const renderNewsTags = useCallback(
-        (tags) => {
-            return tags?.map((tag, index) => (
-                <Tag key={`${index}_${tag?.name}`}>{tag?.name}</Tag>
-            ));
-        },
-        []
-    );
+    const renderNewsTags = useCallback((tags) => {
+        return tags?.map((tag, index) => (
+            <Tag key={`${index}_${tag?.name}`}>{tag?.name}</Tag>
+        ));
+    }, []);
 
     return (
         <BlockStack gap={400}>

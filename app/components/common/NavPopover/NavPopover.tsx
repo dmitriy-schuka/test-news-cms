@@ -3,8 +3,8 @@ import React, { useState, useCallback } from 'react';
 import type { FC } from 'react';
 
 interface INavPopover {
-    activatorTitle: string
-    actionListItems: Array<{content: string, onAction: () => void}>
+    activatorTitle: string;
+    actionListItems: Array<{ content: string; onAction: () => void }>;
 }
 
 const NavPopover: FC<INavPopover> = (props) => {
