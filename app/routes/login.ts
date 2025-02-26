@@ -9,7 +9,7 @@ export async function action({ request }: { request: Request }) {
         const user = await authenticator.authenticate('user-pass', request);
 
         const session = await sessionStorage.getSession(
-          request.headers.get('cookie')
+            request.headers.get('cookie')
         );
         session.set('user', user);
 

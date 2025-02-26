@@ -1,7 +1,7 @@
 import { json } from '@remix-run/node';
 import { useLoaderData, useSearchParams } from '@remix-run/react';
 import { Page, BlockStack } from '@shopify/polaris';
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from 'react';
 
 import NewsGrid from '~/components/NewsGrid/NewsGrid';
 import NewsMenu from '~/components/NewsMenu/NewsMenu';
@@ -72,9 +72,9 @@ export default function NewsMainPage() {
         if (authError) {
             alert(authError);
             setSearchParams((prev) => {
-                prev.delete('authError')
+                prev.delete('authError');
                 return prev;
-            })
+            });
         }
     }, [authError]);
 
