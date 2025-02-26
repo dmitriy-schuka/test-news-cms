@@ -5,14 +5,16 @@
   "type": "module",
   "scripts": {
     "build": "remix vite:build",
-    "dev": "remix vite:dev",
+    "dev2": "remix vite:dev",
+    "dev": "remix vite:dev --host 0.0.0.0 --port 8000",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint --ext .ts,.tsx .",
     "lint:fix": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint --ext .ts,.tsx --fix .",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "cron": "tsx app/cron/index.ts"
+    "cron": "tsx app/cron/index.ts",
+    "start:all": "npm run dev & npm run cron"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
