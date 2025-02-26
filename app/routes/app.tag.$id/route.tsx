@@ -22,13 +22,13 @@ import {
     getTagById,
     updateTag,
 } from '~/repositories/tagRepository.server';
+import { checkUserAuth } from '~/utils/checkUserAuth.server';
 
 export const loader: LoaderFunction = async ({
     params,
     request,
 }: LoaderFunctionArgs) => {
-    // TODO: uncomment for production
-    // await checkUserAuth(request);
+    await checkUserAuth(request);
 
     if (params?.id !== 'new') {
         const tagData = await getTagById(Number(params.id));

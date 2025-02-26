@@ -6,11 +6,12 @@ import { useCallback } from 'react';
 
 import InjectionsTable from '~/components/InjectionsTable/InjectionsTable';
 import { getAllInjections } from '~/repositories/injectionRepository.server';
+import { checkUserAuth } from '~/utils/checkUserAuth.server';
 
 export const loader: LoaderFunction = async ({
     request,
 }: LoaderFunctionArgs) => {
-    //await checkUserAuth(request);
+    await checkUserAuth(request);
 
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') ?? '1');

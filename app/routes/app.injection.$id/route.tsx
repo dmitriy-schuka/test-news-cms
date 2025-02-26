@@ -35,7 +35,7 @@ export const loader: LoaderFunction = async ({
     params,
     request,
 }: LoaderFunctionArgs) => {
-    // await checkUserAuth(request);
+    await checkUserAuth(request);
 
     const [fetchedNews, fetchedSettings] = await Promise.all([
         getNews(),

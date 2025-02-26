@@ -1,9 +1,6 @@
-import { json, redirect } from '@remix-run/node';
-// import { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json } from '@remix-run/node';
 import type {
-    ActionFunction,
     LoaderFunction,
-    ActionFunctionArgs,
     LoaderFunctionArgs,
 } from '@remix-run/node';
 import { useLoaderData, useNavigate } from '@remix-run/react';
@@ -12,12 +9,12 @@ import { useCallback } from 'react';
 
 import TagsTable from '~/components/TagsTable/TagsTable';
 import { getTags } from '~/repositories/tagRepository.server';
+import { checkUserAuth } from '~/utils/checkUserAuth.server';
 
 export const loader: LoaderFunction = async ({
     request,
 }: LoaderFunctionArgs) => {
-    // TODO: uncomment for production
-    //await checkUserAuth(request);
+    await checkUserAuth(request);
 
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') ?? '1');

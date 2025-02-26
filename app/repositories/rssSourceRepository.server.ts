@@ -118,8 +118,6 @@ export const fetchAndStoreRssFeeds = async () => {
                     source.importInterval &&
                     difference >= Number(source.importInterval)
                 ) {
-                    console.log('FETCH RSS!');
-
                     /** Remove old existing rss news from db */
                     source?.id && (await deleteRssNewsBySourceId(source.id));
 

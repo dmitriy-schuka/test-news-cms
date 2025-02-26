@@ -11,11 +11,14 @@ import { useEffect, useState } from 'react';
 import type { News } from '~/@types/news';
 import NewsSingle from '~/components/NewsSingle/NewsSingle';
 import { getNewsById } from '~/repositories/newsRepository.server';
+import { checkUserAuth } from '~/utils/checkUserAuth.server';
 
 export const loader: LoaderFunction = async ({
     params,
     request,
 }: LoaderFunctionArgs) => {
+    await checkUserAuth(request);
+
     let newsData = null;
 
     if (params?.id) {

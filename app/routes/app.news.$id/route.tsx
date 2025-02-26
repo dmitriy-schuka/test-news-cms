@@ -32,8 +32,7 @@ export const loader: LoaderFunction = async ({
     params,
     request,
 }: LoaderFunctionArgs) => {
-    // TODO: uncomment for production
-    // await checkUserAuth(request);
+    await checkUserAuth(request);
 
     const fetchedTags = await getTags();
 
@@ -84,8 +83,7 @@ export const action: ActionFunction = async ({
                         published: isNewsPublished
                             ? isNewsPublished === 'true'
                             : undefined,
-                        // userId: user?.id,
-                        userId: 1,
+                        userId: user?.id || 1,
                     },
                     newsTags,
                     {
@@ -112,8 +110,7 @@ export const action: ActionFunction = async ({
                         published: isNewsPublished
                             ? isNewsPublished === 'true'
                             : undefined,
-                        // userId: user?.id,,
-                        userId: 1,
+                        userId: user?.id || 1,
                     },
                     newsTags,
                     {

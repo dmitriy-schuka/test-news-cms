@@ -25,7 +25,7 @@ const Header = ({ user }: { user: { email: string; name: string } | null }) => {
 
                 <Box padding={400}>
                     <InlineStack gap={500}>
-                        <UserMenu user={user} />
+                        {user && <UserMenu user={user} />}
                         <AuthMenu user={user} />
                     </InlineStack>
                 </Box>

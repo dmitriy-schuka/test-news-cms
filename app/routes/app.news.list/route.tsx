@@ -11,8 +11,7 @@ import { checkUserAuth } from '~/utils/checkUserAuth.server';
 export const loader: LoaderFunction = async ({
     request,
 }: LoaderFunctionArgs) => {
-    // TODO: uncomment for production
-    // await checkUserAuth(request);
+    await checkUserAuth(request);
 
     const fetchedNews = await newsLoader(request);
 

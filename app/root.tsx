@@ -11,9 +11,7 @@ import {
 
 import { PolarisProvider } from '~/components/providers/PolarisProvider';
 
-// import styles from "@shopify/polaris/build/esm/styles.css";
 import '@shopify/polaris/build/esm/styles.css';
-// import "./tailwind.css";
 import tailwindStyles from './tailwind.css?url';
 
 // export const loader = async ({ request }: { request: Request }) => {
