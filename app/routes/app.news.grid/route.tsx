@@ -1,7 +1,7 @@
 import { json } from '@remix-run/node';
 import { useLoaderData, useSearchParams } from '@remix-run/react';
 import { Page, BlockStack } from '@shopify/polaris';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from "react";
 
 import NewsGrid from '~/components/NewsGrid/NewsGrid';
 import NewsMenu from '~/components/NewsMenu/NewsMenu';
@@ -23,6 +23,7 @@ export const loader = async ({ request }: { request: Request }) => {
 export default function NewsMainPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const { fetchedNews, fetchedRssNews } = useLoaderData<typeof loader>();
+    const authError = searchParams.get('authError');
 
     const updateSearchParams = useCallback(
         (params: Record<string, string | undefined>) => {
@@ -66,6 +67,16 @@ export default function NewsMainPage() {
             return <RssNewsCard key={`RssNews_${index}`} rssNews={rssNews} />;
         });
     };
+
+    useEffect(() => {
+        if (authError) {
+            alert(authError);
+            setSearchParams((prev) => {
+                prev.delete('authError')
+                return prev;
+            })
+        }
+    }, [authError]);
 
     return (
         <Page title={'News'} titleHidden fullWidth>
