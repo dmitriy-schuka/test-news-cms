@@ -1,45 +1,85 @@
+import type { LinksFunction } from '@remix-run/node';
 import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+    Links,
+    Meta,
+    Outlet,
+    Scripts,
+    isRouteErrorResponse,
+    useRouteError,
+    ScrollRestoration,
+} from '@remix-run/react';
 
-import "./tailwind.css";
+import { PolarisProvider } from '~/components/providers/PolarisProvider';
+
+import '@shopify/polaris/build/esm/styles.css';
+import tailwindStyles from './tailwind.css?url';
+
+// export const loader = async ({ request }: { request: Request }) => {
+//   const session = await sessionStorage.getSession(request.headers.get("cookie"));
+//   const user = session.get("user");
+//   return json({ user });
+// };
 
 export const links: LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
+    // { rel: "preconnect", href: "https://fonts.googleapis.com" },
+    // {
+    //   rel: "preconnect",
+    //   href: "https://fonts.gstatic.com",
+    //   crossOrigin: "anonymous",
+    // },
+    // {
+    //   rel: "stylesheet",
+    //   href: styles,
+    // },
+    //   {
+    //     rel: "stylesheet",
+    //     href: "@shopify/polaris/build/esm/styles.css",
+    //   },
+    // { rel: "stylesheet", href: "https://unpkg.com/@shopify/polaris/build/esm/styles.css" },
+    { rel: 'stylesheet', href: tailwindStyles },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  );
+export default function App() {
+    return (
+        <html>
+            <head>
+                <meta charSet="utf-8" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+                <link rel="preconnect" href="https://cdn.shopify.com/" />
+                <Meta />
+                <Links />
+            </head>
+            <body>
+                <PolarisProvider>
+                    <Outlet />
+                    <ScrollRestoration />
+                    <Scripts />
+                </PolarisProvider>
+            </body>
+        </html>
+    );
 }
 
-export default function App() {
-  return <Outlet />;
+export function ErrorBoundary() {
+    const error = useRouteError();
+
+    if (isRouteErrorResponse(error) && error.status === 404) {
+        return <meta httpEquiv="refresh" content="0;url=/app/news/grid" />;
+    }
+
+    let errorMessage = 'Unknown error';
+    if (error instanceof Error) {
+        errorMessage = error.message;
+    }
+
+    return (
+        <div>
+            <h1>Sorry.</h1>
+            <p>Something went wrong.</p>
+            <pre>{errorMessage}</pre>
+        </div>
+    );
 }

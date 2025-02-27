@@ -4,9 +4,37 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  /*@apply bg-white dark:bg-gray-950;*/
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  /*@media (prefers-color-scheme: dark) {*/
+  /*  color-scheme: dark;*/
+  /*}*/
+}
+
+:root {
+  --screen-small: 576px;
+  --color-white: white;
+  --color-blue: #036;
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close{
+  opacity: 0;
+}
+
+.UserMenu__icon .Polaris-Icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.UserMenu__icon .Polaris-Icon__Svg {
+  fill: var(--color-white) !important;
 }

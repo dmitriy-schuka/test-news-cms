@@ -1,0 +1,12 @@
+.Header__main {
+  width: 100%;
+  position: sticky;
+  background-color: var(--color-blue);
+}
+
+.Header__icon {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: cover;
+  object-position: center;
+}

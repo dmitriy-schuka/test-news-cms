@@ -1,0 +1,15 @@
+.Text__truncate {
+  /*width: 250px;*/
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.NewsVideo__container {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 0 0.0625rem rgba(0, 0, 0, 0.08) inset;
+  border-radius: 0.5rem
+}

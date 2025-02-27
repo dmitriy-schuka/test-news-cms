@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "linux-musl", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int           @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  email         String        @unique
+  password      String
+  role          String        @default("publicist")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  News          News[]
+}
+
+model News {
+  id            Int           @id @default(autoincrement())
+  title         String?
+  content       String?
+  published     Boolean       @default(false)
+  tags          Tag[]
+  userId        Int
+  author        User          @relation(fields: [userId], references: [id])
+  media         Media[]
+  injection     Injection[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+}
+
+model Tag {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
+  news          News[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Media {
+  id            Int           @id @default(autoincrement())
+  url           String
+  mediaType     String
+  newsId        Int?
+  news          News?         @relation(fields: [newsId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Settings {
+  id                Int     @id @default(autoincrement())
+  listInjections    Int     @default(4)
+  searchInjections  Int     @default(3)
+}
+
+model Injection {
+  id            Int           @id @default(autoincrement())
+  injectionType InjectionType
+  imageUrl      String?
+  linkUrl       String?
+  text          String?
+  newsId        Int?
+  news          News?         @relation(fields: [newsId], references: [id])
+  isDraft       Boolean       @default(true)
+  priority      Float         @default(0.0)
+  displayOn     DisplayOn
+  regex         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model RssSource {
+  id            Int           @id @default(autoincrement())
+  name          String
+  url           String        @unique
+  isActive      Boolean       @default(true)
+  fieldMapping  Json                         // Matching fields with news fields
+  stopTags      Json                         // Tags that stop import if present
+  importInterval Int          @default(60)   // Interval in minutes
+  fetchedAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  RssNews       RssNews[]
+}
+
+model RssNews {
+  id              Int           @id @default(autoincrement())
+  title           String?
+  content         String?
+  mediaUrl        String?
+  rssLink         String?
+  published       Boolean       @default(false)
+  rssSourceId     Int?
+  publicatedDate  String?
+  rssSource       RssSource?    @relation(fields: [rssSourceId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+enum InjectionType {
+  IMAGE
+  TEXT
+  NEWS
+}
+
+enum DisplayOn {
+  LIST
+  SEARCH
+  BOTH
+}
