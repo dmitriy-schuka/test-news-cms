@@ -1,4 +1,4 @@
-import { ADMIN_SEED } from '~/constants/db';
+import { ADMIN_SEED, FIRST_RSS } from "~/constants/db";
 import { prisma } from '~/db/prisma.server';
 import { hashPassword } from '~/utils/hash.server';
 
@@ -20,6 +20,18 @@ async function seed() {
     }
 
     console.log('Admin user seeded.');
+
+    const firstTestSource = await prisma.rssSource.findUnique({
+        where: { id: 2 },
+    });
+
+    if (!firstTestSource) {
+        await prisma.rssSource.create({
+            data: FIRST_RSS,
+        });
+    }
+
+    console.log('First test rss source seeded.');
 }
 
 seed()

@@ -14,7 +14,7 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "cron": "tsx app/cron/index.ts",
-    "start:all": "npm run dev & npm run cron"
+    "start:all": "npm run dev & npm run db:seed && npm run cron"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
