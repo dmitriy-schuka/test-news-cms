@@ -1,40 +1,73 @@
-# Welcome to Remix!
+# Test News CMS
 
-- 📖 [Remix docs](https://remix.run/docs)
+A news management system with RSS import. Built with Remix, Vite, Prisma, and Docker.
 
-## Development
+## Installation & Setup
 
-Run the dev server:
+### 1. Install Dependencies
+```sh
+npm install
+```
 
-```shellscript
+### 2. Run in Development Mode
+
+```sh
 npm run dev
 ```
 
-## Deployment
-
-First, build your app for production:
+### 3. Run in Docker
 
 ```sh
-npm run build
+docker build -t my_app .
+docker run -p 8000:8000 my_appl
 ```
 
-Then run the app in production mode:
+Or start with automatic database migrations and cron jobs:
 
 ```sh
-npm start
+npm run start:all
 ```
 
-Now you'll need to pick a host to deploy it to.
+### Scripts
+npm run build — Build the project
 
-### DIY
+npm run dev — Start the local development server
 
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
+npm run dev:docker — Start the server on 0.0.0.0:8000 (for Docker)
 
-Make sure to deploy the output of `npm run build`
+npm run start — Run the production server
 
-- `build/server`
-- `build/client`
+npm run typecheck — TypeScript type checking
 
-## Styling
+npm run lint — Lint the code
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+npm run lint:fix — Fix linting errors
+
+npm run db:migrate — Run database migrations
+
+npm run db:seed — Seed the database with initial data
+
+npm run cron — Run scheduled cron jobs
+
+### Initial Data
+When running npm run db:seed, the following data is created:
+
+- Administrator
+
+  email: admin@gmail.com
+  
+  default password: admin
+  
+- Test RSS Source
+  
+  url: https://feeds.bbci.co.uk/news/rss.xml
+
+
+### Project Structure
+prisma/ — Database schema and migrations
+
+app/ — Main application code
+
+app/cron/ — Scheduled tasks
+
+prisma/seed.ts — Initial data seeding script
